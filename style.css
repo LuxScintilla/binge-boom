@@ -1,0 +1,271 @@
+:root {
+  --light-bg: #33343b;
+  --medium-bg: #2a2c35;
+  --dark-bg: #1f2029;
+
+  --divider: #292b33;
+
+  --main-text: #e9e9ea;
+  --sub-text: #bcbcbf;
+  --text: #8f9094;
+
+  --accent-1: #6c5dd2;
+  --accent-2: #fe754b;
+
+  --list-margin: 1.6rem;
+  --main-padding: 3.2rem;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+/* ------------ General ------------ */
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
+  background-color: var(--medium-bg);
+
+  font-family: "Urbanist", sans-serif;
+  color: var(--text);
+}
+
+.main-container {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  grid-template-rows: auto 1fr;
+
+  height: 90%;
+
+  background-color: var(--dark-bg);
+  border-radius: 1.6rem;
+  border: 1px solid var(--divider);
+
+  box-shadow: 0 0 16px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ------------ Side Menu ------------ */
+
+.side-menu {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  font-size: 1.6rem;
+  border-right: 1px solid var(--divider);
+  padding: var(--main-padding);
+}
+
+/* ------------ Header ------------ */
+
+.side-menu-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3.2rem;
+  font-size: 1.8rem;
+}
+
+.fa-tv {
+  color: var(--accent-1);
+}
+
+.logo-title {
+  margin-left: 0.8rem;
+  background: -webkit-linear-gradient(0deg, var(--accent-1), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ------------ Main Menu ------------ */
+
+.menu-list {
+  position: relative;
+  list-style-type: none;
+  margin-bottom: 3.2rem;
+  padding-bottom: 2.4rem;
+}
+
+.menu-list::after {
+  content: "";
+  position: absolute;
+  height: 1px;
+  width: 100%;
+  background-color: var(--divider);
+  bottom: 0;
+  left: 0;
+}
+
+.menu-title {
+  font-size: 1.2rem;
+  color: var(--sub-text);
+  margin-bottom: 1.6rem;
+}
+
+.menu-list-item {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  margin-bottom: var(--list-margin);
+}
+
+/* ------------ Favourites ------------ */
+
+.fav-list {
+  list-style-type: none;
+  margin-bottom: 3.2rem;
+}
+
+.fav-title {
+  font-size: 1.2rem;
+  color: var(--sub-text);
+  margin-bottom: 1.6rem;
+}
+
+.fav-item {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  margin-bottom: var(--list-margin);
+}
+
+.fav-pic {
+  width: 1.8rem;
+  border-radius: 50%;
+}
+
+/* ------------ Top Menu ------------ */
+
+.top-menu {
+  display: flex;
+  align-items: center;
+  padding: calc(var(--main-padding) - 0.8rem);
+}
+
+.search-container {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 0.8rem;
+}
+
+.search-btn {
+  color: var(--sub-text);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.search-input {
+  border: none;
+  background-color: transparent;
+  padding: 0.8rem;
+  border-radius: 1.6rem;
+}
+
+.form {
+  display: flex;
+  gap: 0.8rem;
+  margin-left: 1.6rem;
+}
+
+.radio-btn {
+  cursor: pointer;
+}
+
+.profile-container {
+  margin-left: auto;
+}
+
+.profile-avatar {
+  width: 4.8rem;
+  border-radius: 50%;
+}
+
+/* ------------ Main Content ------------ */
+
+.main-content {
+  overflow-y: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.main-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* ------------ Featured Content ------------ */
+
+.featured-movie {
+  position: relative;
+  height: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin-bottom: 3.2rem;
+}
+
+.featured-info {
+  position: absolute;
+  left: var(--main-padding);
+  bottom: var(--main-padding);
+
+  color: #ffffff;
+}
+
+.featured-title {
+  font-size: 2.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.featured-subtext {
+  font-size: 1.8rem;
+  margin-bottom: 3.2rem;
+}
+
+.featured-btn {
+  font-family: "Urbanist", sans-serif;
+  font-weight: bold;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.8rem;
+  padding: 1rem 3.2rem;
+  background-color: var(--accent-1);
+}
+
+/* ------------ Top Movies ------------ */
+
+.top-movies-container {
+  display: flex;
+  gap: 1.6rem;
+  padding: var(--main-padding);
+}
+
+.top-movies-title {
+  display: block;
+  font-size: 1.8rem;
+  margin-left: var(--main-padding);
+}
+
+.top-movie {
+  max-width: 19.2rem;
+  background-color: var(--light-bg);
+  border-radius: 1.6rem;
+  overflow: hidden;
+}
+
+.top-movie-img {
+  width: 100%;
+}
+
+.top-text-box {
+  padding: 2.4rem 1.2rem;
+}
+
+.top-title {
+  font-size: 1.6rem;
+  margin-bottom: 0.8rem;
+}

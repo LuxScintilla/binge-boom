@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BingeBoom | Ekaterina Furman</title>
+
+    <script
+      src="https://kit.fontawesome.com/9393d0e112.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="main.js"></script>
+  </head>
+  <body>
+    <div class="main-container">
+      <section class="side-menu">
+        <div class="side-menu-header">
+          <i class="fa-solid fa-tv"></i>
+          <h1 class="logo-title">BingeBoom</h1>
+        </div>
+        <p class="menu-title">New Feeds</p>
+        <ul class="menu-list">
+          <li class="menu-list-item">
+            <i class="fa-solid fa-house"></i>
+            <p class="list-item-text">Home</p>
+          </li>
+          <li class="menu-list-item">
+            <i class="fa-solid fa-fire"></i>
+            <p class="list-item-text">Popular</p>
+          </li>
+          <li class="menu-list-item">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+            <p class="list-item-text">Trending</p>
+          </li>
+          <li class="menu-list-item">
+            <i class="fa-solid fa-hourglass-end"></i>
+            <p class="list-item-text">Upcoming</p>
+          </li>
+        </ul>
+        <div class="side-favourites">
+          <p class="fav-title">Favourites</p>
+          <ul class="fav-list">
+            <li class="fav-item">
+              <img class="fav-pic" src="./img/cute.webp" alt="fav picture" />
+              <p class="fav-item-text">Test Movie 1</p>
+            </li>
+            <li class="fav-item">
+              <img class="fav-pic" src="./img/cute.webp" alt="fav picture" />
+              <p class="fav-item-text">Another Test 2</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section class="top-menu">
+        <div class="search-container">
+          <input
+            type="text"
+            class="search-input"
+            id="search-input"
+            name="search-input"
+            placeholder="Search ..."
+            aria-label="search input bar"
+            minlength="2"
+            maxlength="25"
+          />
+
+          <button class="search-btn" aria-label="search button">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+        <form class="form">
+          <input
+            class="radio-btn"
+            type="radio"
+            id="movies"
+            name="search-type"
+            value="Movies"
+          />
+          <label class="radio-label" for="movies">Movies</label>
+          <input
+            class="radio-btn"
+            type="radio"
+            id="shows"
+            name="search-type"
+            value="Shows"
+          />
+          <label class="radio-label" for="shows">Shows</label>
+        </form>
+        <div class="profile-container">
+          <img
+            class="profile-avatar"
+            src="./img/cute.webp"
+            alt="profile avatar"
+          />
+        </div>
+      </section>
+
+      <section class="main-content">
+        <div
+          class="featured-movie"
+          style="background-image: url('./img/sweet-nature.jpg')"
+        >
+          <div class="featured-info">
+            <h2 class="featured-title">Featured title goes here</h2>
+            <p class="featured-subtext">
+              Some more information and subtext will be sitting here
+            </p>
+            <button class="featured-btn">Button</button>
+          </div>
+        </div>
+
+        <h3 class="top-movies-title">Top 5 Movies</h3>
+
+        <div class="top-movies-container">
+          <div class="top-movie">
+            <img
+              src="./img/cute.webp"
+              alt="top movie image"
+              class="top-movie-img"
+            />
+            <div class="top-text-box">
+              <p class="top-title">This is a Movie</p>
+              <p class="top-description">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa
+                soluta sed quam rem itaque quas similique labore pariatur
+                facilis vel!
+              </p>
+            </div>
+          </div>
+          <div class="top-movie">
+            <img
+              src="./img/cute.webp"
+              alt="top movie image"
+              class="top-movie-img"
+            />
+            <div class="top-text-box">
+              <p class="top-title">This is a Movie</p>
+              <p class="top-description">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa
+                soluta sed quam rem itaque quas similique labore pariatur
+                facilis vel!
+              </p>
+            </div>
+          </div>
+          <div class="top-movie">
+            <img
+              src="./img/cute.webp"
+              alt="top movie image"
+              class="top-movie-img"
+            />
+            <div class="top-text-box">
+              <p class="top-title">This is a Movie</p>
+              <p class="top-description">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa
+                soluta sed quam rem itaque quas similique labore pariatur
+                facilis vel!
+              </p>
+            </div>
+          </div>
+          <div class="top-movie">
+            <img
+              src="./img/cute.webp"
+              alt="top movie image"
+              class="top-movie-img"
+            />
+            <div class="top-text-box">
+              <p class="top-title">This is a Movie</p>
+              <p class="top-description">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa
+                soluta sed quam rem itaque quas similique labore pariatur
+                facilis vel!
+              </p>
+            </div>
+          </div>
+          <div class="top-movie">
+            <img
+              src="./img/cute.webp"
+              alt="top movie image"
+              class="top-movie-img"
+            />
+            <div class="top-text-box">
+              <p class="top-title">This is a Movie</p>
+              <p class="top-description">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa
+                soluta sed quam rem itaque quas similique labore pariatur
+                facilis vel!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
