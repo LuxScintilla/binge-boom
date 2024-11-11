@@ -23,17 +23,19 @@ async function getApiData(endpoint) {
     },
   };
   const response = await fetch(
-    `https://api.themoviedb.org/3/${endpoint}?language=en-US&page=1`,
+    `https://api.themoviedb.org/3/${endpoint}?language=en-US`,
     options
   );
   const data = await response.json();
-  return data.results;
+  return data;
 }
 
 // CREATE FEATURED MOVIE ON HOME PAGE -------------------------------
 
 async function createFeatured() {
-  const data = await getApiData("movie/now_playing");
+  const response = await getApiData("movie/now_playing");
+  const data = await response.results;
+
   const number = generateRandomNumber();
   const featuredMovie = data[number];
 
@@ -59,6 +61,10 @@ async function createFeatured() {
   btn.classList.add("featured-btn");
   btn.setAttribute("data-id", featuredMovie.id);
   btn.textContent = "More Info";
+  btn.addEventListener("click", function () {
+    console.log(this.dataset.id);
+    createSingleMoviePage(this.dataset.id);
+  });
 
   featuredInfoDIV.appendChild(featuredTitle);
   featuredInfoDIV.appendChild(featuredSubText);
@@ -75,8 +81,8 @@ async function createFeatured() {
 // CREATE TOP 5 MOVIES ON HOME PAGE ---------------------------------
 
 async function createTop5Movies() {
-  const data = await getApiData("movie/popular");
-  console.log(data);
+  const response = await getApiData("movie/popular");
+  const data = await response.results;
 
   const topMoviesDIV = document.createElement("div");
   topMoviesDIV.classList.add("top-movies-container");
@@ -113,6 +119,7 @@ async function createTop5Movies() {
 
     const movieBtn = document.createElement("button");
     movieBtn.classList.add("top-btn");
+    movieBtn.setAttribute("data-id", data[i].id);
     movieBtn.textContent = "More Info";
 
     movieTextBoxDIV.appendChild(movieTitle);
@@ -123,8 +130,67 @@ async function createTop5Movies() {
     topMoviesDIV.appendChild(movieDIV);
 
     mainContent.childNodes.forEach((node) => {
-      if (node.classList.contains("footer")) {
+      if (node.classList.contains("top-shows-container")) {
         mainContent.insertBefore(topMoviesDIV, node);
+      }
+    });
+  }
+}
+
+// CREATE TOP 5 SHOWS ON HOME PAGE ---------------------------------
+
+async function createTop5Shows() {
+  const response = await getApiData("tv/popular");
+  const data = await response.results;
+
+  const topShowsDIV = document.createElement("div");
+  topShowsDIV.classList.add("top-shows-container");
+
+  const sectionText = document.createElement("h3");
+  sectionText.classList.add("top-shows-section-text");
+  sectionText.textContent = "Top 5 TV Shows";
+
+  topShowsDIV.appendChild(sectionText);
+
+  for (let i = 0; i <= 4; i++) {
+    const showDIV = document.createElement("div");
+    showDIV.classList.add("top-show");
+    showDIV.setAttribute("data-id", data[i].id);
+
+    const showIMG = document.createElement("img");
+    showIMG.classList.add("top-show-img");
+    showIMG.setAttribute(
+      "src",
+      `https://image.tmdb.org/t/p/w500${data[i].poster_path}`
+    );
+    showIMG.setAttribute("alt", "tv show poster");
+
+    const showTextBoxDIV = document.createElement("div");
+    showTextBoxDIV.classList.add("top-text-box");
+
+    const showTitle = document.createElement("p");
+    showTitle.classList.add("top-title");
+    showTitle.textContent = data[i].name;
+
+    const showDescription = document.createElement("p");
+    showDescription.classList.add("top-description");
+    showDescription.textContent = `${data[i].overview.substring(0, 75)} ...`;
+
+    const showBtn = document.createElement("button");
+    showBtn.classList.add("top-btn");
+    showBtn.setAttribute("data-id", data[i].id);
+    showBtn.textContent = "More Info";
+
+    showTextBoxDIV.appendChild(showTitle);
+    showTextBoxDIV.appendChild(showDescription);
+    showTextBoxDIV.appendChild(showBtn);
+    showDIV.appendChild(showIMG);
+    showDIV.appendChild(showTextBoxDIV);
+    topShowsDIV.appendChild(showDIV);
+
+    mainContent.childNodes.forEach((node) => {
+      if (node.classList.contains("footer")) {
+        mainContent.insertBefore(topShowsDIV, node);
       }
     });
   }
@@ -171,15 +237,35 @@ function createFooter() {
   mainContent.appendChild(footerDIV);
 }
 
+// CREATE SINGLE MOVIE INFO PAGE ON HOME PAGE ----------------------
+
+async function createSingleMoviePage(id) {
+  const data = await getApiData(`movie/${id}`);
+  console.log(data);
+
+  while (mainContent.firstChild) {
+    mainContent.removeChild(mainContent.firstChild);
+  }
+
+  const selectedMovieDIV = document.createElement("div");
+  selectedMovieDIV.classList.add("featured-movie");
+  selectedMovieDIV.setAttribute(
+    "style",
+    `background-image: url('https://image.tmdb.org/t/p/original${data.backdrop_path}')`
+  );
+  mainContent.appendChild(selectedMovieDIV);
+}
+
 // CREATE FULL HOME PAGE -------------------------------------------
 
 function createHome() {
   while (mainContent.firstChild) {
     mainContent.removeChild(mainContent.firstChild);
   }
+  createFooter();
+  createTop5Shows();
   createTop5Movies();
   createFeatured();
-  createFooter();
 }
 
 createHome();
