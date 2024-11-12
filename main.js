@@ -3,7 +3,7 @@ const popularBtn = document.querySelector(".menu-link-popular");
 const topRatedBtn = document.querySelector(".menu-link-toprated");
 const upcomingBtn = document.querySelector(".menu-link-upcoming");
 
-const mainContent = document.querySelector(".main-content");
+homeBtn.addEventListener("click", createHome);
 
 // GENERATE RANDOM NUMBER FROM 0 TO 19 ------------------------------
 
@@ -37,29 +37,31 @@ async function createFeatured() {
   const data = await response.results;
 
   const number = generateRandomNumber();
-  const featuredMovie = data[number];
+  const movie = data[number];
 
-  const featuredMovieDIV = document.createElement("div");
-  featuredMovieDIV.classList.add("featured-movie");
-  featuredMovieDIV.setAttribute(
-    "style",
-    `background-image: url('https://image.tmdb.org/t/p/original${featuredMovie.backdrop_path}')`
-  );
+  const featuredContainer = document.querySelector(".featured");
+  while (featuredContainer.hasChildNodes()) {
+    featuredContainer.removeChild(featuredContainer.firstChild);
+  }
+
+  const featuredDIV = document.createElement("div");
+  featuredDIV.classList.add("featured-movie");
+  featuredDIV.style.backgroundImage = `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`;
 
   const featuredInfoDIV = document.createElement("div");
   featuredInfoDIV.classList.add("featured-info");
 
   const featuredTitle = document.createElement("h2");
   featuredTitle.classList.add("featured-title");
-  featuredTitle.textContent = featuredMovie.title;
+  featuredTitle.textContent = movie.title;
 
   const featuredSubText = document.createElement("p");
   featuredSubText.classList.add("featured-subtext");
-  featuredSubText.textContent = featuredMovie.overview;
+  featuredSubText.textContent = movie.overview;
 
   const btn = document.createElement("button");
   btn.classList.add("featured-btn");
-  btn.setAttribute("data-id", featuredMovie.id);
+  btn.setAttribute("data-id", movie.id);
   btn.textContent = "More Info";
   btn.addEventListener("click", function () {
     console.log(this.dataset.id);
@@ -69,13 +71,9 @@ async function createFeatured() {
   featuredInfoDIV.appendChild(featuredTitle);
   featuredInfoDIV.appendChild(featuredSubText);
   featuredInfoDIV.appendChild(btn);
-  featuredMovieDIV.appendChild(featuredInfoDIV);
+  featuredDIV.appendChild(featuredInfoDIV);
 
-  mainContent.childNodes.forEach((node) => {
-    if (node.classList.contains("top-movies-container")) {
-      mainContent.insertBefore(featuredMovieDIV, node);
-    }
-  });
+  featuredContainer.appendChild(featuredDIV);
 }
 
 // CREATE TOP 5 MOVIES ON HOME PAGE ---------------------------------
@@ -84,22 +82,27 @@ async function createTop5Movies() {
   const response = await getApiData("movie/popular");
   const data = await response.results;
 
+  const top5Movies = document.querySelector(".top5-movies");
+  while (top5Movies.hasChildNodes()) {
+    top5Movies.removeChild(top5Movies.firstChild);
+  }
+
   const topMoviesDIV = document.createElement("div");
-  topMoviesDIV.classList.add("top-movies-container");
+  topMoviesDIV.classList.add("top5-container");
 
   const sectionText = document.createElement("h3");
-  sectionText.classList.add("top-movies-section-text");
+  sectionText.classList.add("top5-section-text");
   sectionText.textContent = "Top 5 Movies";
 
   topMoviesDIV.appendChild(sectionText);
 
   for (let i = 0; i <= 4; i++) {
     const movieDIV = document.createElement("div");
-    movieDIV.classList.add("top-movie");
+    movieDIV.classList.add("top5-item");
     movieDIV.setAttribute("data-id", data[i].id);
 
     const movieIMG = document.createElement("img");
-    movieIMG.classList.add("top-movie-img");
+    movieIMG.classList.add("top5-img");
     movieIMG.setAttribute(
       "src",
       `https://image.tmdb.org/t/p/w500${data[i].poster_path}`
@@ -107,18 +110,18 @@ async function createTop5Movies() {
     movieIMG.setAttribute("alt", "movie poster");
 
     const movieTextBoxDIV = document.createElement("div");
-    movieTextBoxDIV.classList.add("top-text-box");
+    movieTextBoxDIV.classList.add("top5-text-box");
 
     const movieTitle = document.createElement("p");
-    movieTitle.classList.add("top-title");
+    movieTitle.classList.add("top5-title");
     movieTitle.textContent = data[i].title;
 
     const movieDescription = document.createElement("p");
-    movieDescription.classList.add("top-description");
+    movieDescription.classList.add("top5-description");
     movieDescription.textContent = `${data[i].overview.substring(0, 75)} ...`;
 
     const movieBtn = document.createElement("button");
-    movieBtn.classList.add("top-btn");
+    movieBtn.classList.add("top5-btn");
     movieBtn.setAttribute("data-id", data[i].id);
     movieBtn.textContent = "More Info";
 
@@ -129,11 +132,7 @@ async function createTop5Movies() {
     movieDIV.appendChild(movieTextBoxDIV);
     topMoviesDIV.appendChild(movieDIV);
 
-    mainContent.childNodes.forEach((node) => {
-      if (node.classList.contains("top-shows-container")) {
-        mainContent.insertBefore(topMoviesDIV, node);
-      }
-    });
+    top5Movies.appendChild(topMoviesDIV);
   }
 }
 
@@ -143,22 +142,27 @@ async function createTop5Shows() {
   const response = await getApiData("tv/popular");
   const data = await response.results;
 
+  const top5Shows = document.querySelector(".top5-shows");
+  while (top5Shows.hasChildNodes()) {
+    top5Shows.removeChild(top5Shows.firstChild);
+  }
+
   const topShowsDIV = document.createElement("div");
-  topShowsDIV.classList.add("top-shows-container");
+  topShowsDIV.classList.add("top5-container");
 
   const sectionText = document.createElement("h3");
-  sectionText.classList.add("top-shows-section-text");
+  sectionText.classList.add("top5-section-text");
   sectionText.textContent = "Top 5 TV Shows";
 
   topShowsDIV.appendChild(sectionText);
 
   for (let i = 0; i <= 4; i++) {
     const showDIV = document.createElement("div");
-    showDIV.classList.add("top-show");
+    showDIV.classList.add("top5-item");
     showDIV.setAttribute("data-id", data[i].id);
 
     const showIMG = document.createElement("img");
-    showIMG.classList.add("top-show-img");
+    showIMG.classList.add("top5-img");
     showIMG.setAttribute(
       "src",
       `https://image.tmdb.org/t/p/w500${data[i].poster_path}`
@@ -166,18 +170,18 @@ async function createTop5Shows() {
     showIMG.setAttribute("alt", "tv show poster");
 
     const showTextBoxDIV = document.createElement("div");
-    showTextBoxDIV.classList.add("top-text-box");
+    showTextBoxDIV.classList.add("top5-text-box");
 
     const showTitle = document.createElement("p");
-    showTitle.classList.add("top-title");
+    showTitle.classList.add("top5-title");
     showTitle.textContent = data[i].name;
 
     const showDescription = document.createElement("p");
-    showDescription.classList.add("top-description");
+    showDescription.classList.add("top5-description");
     showDescription.textContent = `${data[i].overview.substring(0, 75)} ...`;
 
     const showBtn = document.createElement("button");
-    showBtn.classList.add("top-btn");
+    showBtn.classList.add("top5-btn");
     showBtn.setAttribute("data-id", data[i].id);
     showBtn.textContent = "More Info";
 
@@ -188,19 +192,17 @@ async function createTop5Shows() {
     showDIV.appendChild(showTextBoxDIV);
     topShowsDIV.appendChild(showDIV);
 
-    mainContent.childNodes.forEach((node) => {
-      if (node.classList.contains("footer")) {
-        mainContent.insertBefore(topShowsDIV, node);
-      }
-    });
+    top5Shows.appendChild(topShowsDIV);
   }
 }
 
 // CREATE FOOTER AT BOTTOM OF THE PAGE ------------------------------
 
 function createFooter() {
-  const footerDIV = document.createElement("div");
-  footerDIV.classList.add("footer");
+  const footer = document.querySelector(".footer");
+  while (footer.hasChildNodes()) {
+    footer.removeChild(footer.firstChild);
+  }
 
   const inspirationPara = document.createElement("p");
   inspirationPara.classList.add("inspiration");
@@ -231,10 +233,9 @@ function createFooter() {
 
   inspirationPara.appendChild(linkDribbble);
   apiPara.appendChild(linkAPI);
-  footerDIV.appendChild(inspirationPara);
-  footerDIV.appendChild(apiPara);
-  footerDIV.appendChild(apiIMG);
-  mainContent.appendChild(footerDIV);
+  footer.appendChild(inspirationPara);
+  footer.appendChild(apiPara);
+  footer.appendChild(apiIMG);
 }
 
 // CREATE SINGLE MOVIE INFO PAGE ON HOME PAGE ----------------------
@@ -243,29 +244,30 @@ async function createSingleMoviePage(id) {
   const data = await getApiData(`movie/${id}`);
   console.log(data);
 
-  while (mainContent.firstChild) {
-    mainContent.removeChild(mainContent.firstChild);
-  }
+  const homePage = document.querySelector(".home-page");
+  homePage.classList.add("hidden");
 
-  const selectedMovieDIV = document.createElement("div");
-  selectedMovieDIV.classList.add("featured-movie");
-  selectedMovieDIV.setAttribute(
-    "style",
-    `background-image: url('https://image.tmdb.org/t/p/original${data.backdrop_path}')`
-  );
-  mainContent.appendChild(selectedMovieDIV);
+  const singlePage = document.querySelector(".single-page");
+  singlePage.classList.remove("hidden");
+  singlePage.style.backgroundImage = `url(https://image.tmdb.org/t/p/original${data.backdrop_path})`;
+
+  const selectedInfo = document.querySelector(".selected-info");
+  selectedInfo.textContent = "test";
 }
 
 // CREATE FULL HOME PAGE -------------------------------------------
 
 function createHome() {
-  while (mainContent.firstChild) {
-    mainContent.removeChild(mainContent.firstChild);
-  }
-  createFooter();
-  createTop5Shows();
-  createTop5Movies();
+  const singlePage = document.querySelector(".single-page");
+  singlePage.classList.add("hidden");
+
+  const homePage = document.querySelector(".home-page");
+  homePage.classList.remove("hidden");
+
   createFeatured();
+  createTop5Movies();
+  createTop5Shows();
+  createFooter();
 }
 
 createHome();
