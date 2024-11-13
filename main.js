@@ -5,6 +5,21 @@ const upcomingBtn = document.querySelector(".menu-link-upcoming");
 
 homeBtn.addEventListener("click", createHome);
 
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 // GENERATE RANDOM NUMBER FROM 0 TO 19 ------------------------------
 
 function generateRandomNumber() {
@@ -22,6 +37,9 @@ async function getApiData(endpoint) {
         "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4Y2JhYzQ5MTdhYjUxOGRiNGNiNjQ0YWViYWE3YWU2ZSIsIm5iZiI6MTczMTA3Mjg0MC40NzY0MzIzLCJzdWIiOiI2NWM1ZjdjNGJkNTg4YjAxNjM0NTMxMTYiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.BGvQjFk9dFg2_dIxBV76Q1mc6r-Qa03OpHRzGTvP908",
     },
   };
+
+  showSpinner();
+
   const response = await fetch(
     `https://api.themoviedb.org/3/${endpoint}?language=en-US`,
     options
@@ -40,9 +58,7 @@ async function createFeatured() {
   const movie = data[number];
 
   const featuredContainer = document.querySelector(".featured");
-  while (featuredContainer.hasChildNodes()) {
-    featuredContainer.removeChild(featuredContainer.firstChild);
-  }
+  clearContainer(".home-page", ".featured");
 
   const featuredDIV = document.createElement("div");
   featuredDIV.classList.add("featured-movie");
@@ -83,9 +99,7 @@ async function createTop5Movies() {
   const data = await response.results;
 
   const top5Movies = document.querySelector(".top5-movies");
-  while (top5Movies.hasChildNodes()) {
-    top5Movies.removeChild(top5Movies.firstChild);
-  }
+  clearContainer(".home-page", ".top5-movies");
 
   const topMoviesDIV = document.createElement("div");
   topMoviesDIV.classList.add("top5-container");
@@ -143,9 +157,7 @@ async function createTop5Shows() {
   const data = await response.results;
 
   const top5Shows = document.querySelector(".top5-shows");
-  while (top5Shows.hasChildNodes()) {
-    top5Shows.removeChild(top5Shows.firstChild);
-  }
+  clearContainer(".home-page", ".top5-shows");
 
   const topShowsDIV = document.createElement("div");
   topShowsDIV.classList.add("top5-container");
@@ -198,11 +210,9 @@ async function createTop5Shows() {
 
 // CREATE FOOTER AT BOTTOM OF THE PAGE ------------------------------
 
-function createFooter() {
-  const footer = document.querySelector(".footer");
-  while (footer.hasChildNodes()) {
-    footer.removeChild(footer.firstChild);
-  }
+function createFooter(currentPage) {
+  const footer = document.querySelector(`${currentPage} .footer`);
+  clearContainer(".home-page", ".footer");
 
   const inspirationPara = document.createElement("p");
   inspirationPara.classList.add("inspiration");
@@ -249,10 +259,92 @@ async function createSingleMoviePage(id) {
 
   const singlePage = document.querySelector(".single-page");
   singlePage.classList.remove("hidden");
-  singlePage.style.backgroundImage = `url(https://image.tmdb.org/t/p/original${data.backdrop_path})`;
+
+  const selectedIMG = document.querySelector(".selected-img");
+  clearContainer(".single-page", ".selected-img");
+  selectedIMG.style.backgroundImage = `linear-gradient(to bottom, transparent, rgba(31, 32, 41)), url(https://image.tmdb.org/t/p/original${data.backdrop_path})`;
+
+  const titleContainer = document.createElement("div");
+  titleContainer.classList.add("selected-title-container");
+
+  const title = document.createElement("h2");
+  title.classList.add("selected-title");
+  title.textContent = data.title;
+
+  const btn = document.createElement("button");
+  btn.classList.add("selected-btn");
+  btn.setAttribute("data-id", data.id);
+  btn.textContent = "Add to Favourites";
+  btn.addEventListener("click", function () {
+    console.log("console favourites");
+  });
 
   const selectedInfo = document.querySelector(".selected-info");
-  selectedInfo.textContent = "test";
+  clearContainer(".single-page", ".selected-info");
+
+  const stars = document.createElement("p");
+  stars.classList.add("selected-stars");
+  stars.innerHTML = `<i class="fa-solid fa-star"></i> ${Number.parseFloat(
+    data.vote_average
+  ).toFixed(1)} / 10`;
+
+  const releaseDate = document.createElement("p");
+  releaseDate.classList.add("selected-release");
+  const date = new Date(data.release_date);
+  releaseDate.innerHTML = `<strong>Release Date:</strong> ${date.getDate()} ${
+    months[date.getMonth()]
+  } ${date.getFullYear()}`;
+
+  const description = document.createElement("p");
+  description.classList.add("selected-description");
+  description.innerHTML = `<strong>Description:</strong> ${data.overview}`;
+
+  const runtime = document.createElement("p");
+  runtime.innerHTML = `<strong>Runtime:</strong> ${data.runtime} minutes`;
+
+  const genres = document.createElement("p");
+  const genreText = [];
+  data.genres.forEach((genre) => genreText.push(genre.name));
+  genres.innerHTML = `<strong>Genres:</strong> ${genreText.join(", ")}`;
+
+  const originalLanguage = document.createElement("p");
+  originalLanguage.innerHTML = `<strong>Original Language:</strong> ${data.original_language.toUpperCase()}`;
+
+  titleContainer.appendChild(title);
+  titleContainer.appendChild(btn);
+  selectedIMG.appendChild(titleContainer);
+  selectedInfo.appendChild(stars);
+  selectedInfo.appendChild(releaseDate);
+  selectedInfo.appendChild(description);
+  selectedInfo.appendChild(runtime);
+  selectedInfo.appendChild(genres);
+  selectedInfo.appendChild(originalLanguage);
+
+  clearContainer(".single-page", ".footer");
+  createFooter(".single-page");
+
+  hideSpinner();
+}
+
+// SHOW AND HIDE SPINNER -------------------------------------------
+
+function showSpinner() {
+  const spinner = document.querySelector(".spinner");
+  spinner.classList.remove("hidden");
+}
+
+function hideSpinner() {
+  const spinner = document.querySelector(".spinner");
+  spinner.classList.add("hidden");
+}
+
+// CLEAR CONTAINERS ------------------------------------------------
+
+function clearContainer(parent, className) {
+  const container = document.querySelector(`${parent} ${className}`);
+  while (container.hasChildNodes()) {
+    container.removeChild(container.firstChild);
+  }
 }
 
 // CREATE FULL HOME PAGE -------------------------------------------
@@ -261,13 +353,15 @@ function createHome() {
   const singlePage = document.querySelector(".single-page");
   singlePage.classList.add("hidden");
 
-  const homePage = document.querySelector(".home-page");
-  homePage.classList.remove("hidden");
-
   createFeatured();
   createTop5Movies();
   createTop5Shows();
-  createFooter();
+  createFooter(".home-page");
+
+  hideSpinner();
+
+  const homePage = document.querySelector(".home-page");
+  homePage.classList.remove("hidden");
 }
 
 createHome();
