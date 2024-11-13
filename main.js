@@ -45,6 +45,9 @@ async function getApiData(endpoint) {
     options
   );
   const data = await response.json();
+
+  hideSpinner();
+
   return data;
 }
 
@@ -80,8 +83,7 @@ async function createFeatured() {
   btn.setAttribute("data-id", movie.id);
   btn.textContent = "More Info";
   btn.addEventListener("click", function () {
-    console.log(this.dataset.id);
-    createSingleMoviePage(this.dataset.id);
+    createMovieDetailsPage(this.dataset.id);
   });
 
   featuredInfoDIV.appendChild(featuredTitle);
@@ -250,18 +252,10 @@ function createFooter(currentPage) {
 
 // CREATE SINGLE MOVIE INFO PAGE ON HOME PAGE ----------------------
 
-async function createSingleMoviePage(id) {
+async function movieDetailsPage(id) {
   const data = await getApiData(`movie/${id}`);
-  console.log(data);
-
-  const homePage = document.querySelector(".home-page");
-  homePage.classList.add("hidden");
-
-  const singlePage = document.querySelector(".single-page");
-  singlePage.classList.remove("hidden");
 
   const selectedIMG = document.querySelector(".selected-img");
-  clearContainer(".single-page", ".selected-img");
   selectedIMG.style.backgroundImage = `linear-gradient(to bottom, transparent, rgba(31, 32, 41)), url(https://image.tmdb.org/t/p/original${data.backdrop_path})`;
 
   const titleContainer = document.createElement("div");
@@ -280,7 +274,6 @@ async function createSingleMoviePage(id) {
   });
 
   const selectedInfo = document.querySelector(".selected-info");
-  clearContainer(".single-page", ".selected-info");
 
   const stars = document.createElement("p");
   stars.classList.add("selected-stars");
@@ -319,11 +312,6 @@ async function createSingleMoviePage(id) {
   selectedInfo.appendChild(runtime);
   selectedInfo.appendChild(genres);
   selectedInfo.appendChild(originalLanguage);
-
-  clearContainer(".single-page", ".footer");
-  createFooter(".single-page");
-
-  hideSpinner();
 }
 
 // SHOW AND HIDE SPINNER -------------------------------------------
@@ -358,10 +346,27 @@ function createHome() {
   createTop5Shows();
   createFooter(".home-page");
 
-  hideSpinner();
-
   const homePage = document.querySelector(".home-page");
   homePage.classList.remove("hidden");
 }
+
+// CREATE MOVIE DETAILS PAGE ---------------------------------------
+
+function createMovieDetailsPage(id) {
+  const homePage = document.querySelector(".home-page");
+  homePage.classList.add("hidden");
+
+  clearContainer(".single-page", ".selected-img");
+  clearContainer(".single-page", ".selected-info");
+  clearContainer(".single-page", ".footer");
+
+  movieDetailsPage(id);
+  createFooter(".single-page");
+
+  const singlePage = document.querySelector(".single-page");
+  singlePage.classList.remove("hidden");
+}
+
+// RUN FIRST PAGE ON LOAD -----------------------------------------
 
 createHome();
