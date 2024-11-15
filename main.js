@@ -100,59 +100,7 @@ async function createTop5Movies() {
   const response = await getApiData("movie/popular");
   const data = await response.results;
 
-  const top5Movies = document.querySelector(".top5-movies");
-  clearContainer(".home-page", ".top5-movies");
-
-  const topMoviesDIV = document.createElement("div");
-  topMoviesDIV.classList.add("top5-container");
-
-  const sectionText = document.createElement("h3");
-  sectionText.classList.add("top5-section-text");
-  sectionText.textContent = "Top 5 Movies";
-
-  topMoviesDIV.appendChild(sectionText);
-
-  for (let i = 0; i <= 4; i++) {
-    const movieDIV = document.createElement("div");
-    movieDIV.classList.add("top5-item");
-    movieDIV.setAttribute("data-id", data[i].id);
-
-    const movieIMG = document.createElement("img");
-    movieIMG.classList.add("top5-img");
-    movieIMG.setAttribute(
-      "src",
-      `https://image.tmdb.org/t/p/w500${data[i].poster_path}`
-    );
-    movieIMG.setAttribute("alt", "movie poster");
-
-    const movieTextBoxDIV = document.createElement("div");
-    movieTextBoxDIV.classList.add("top5-text-box");
-
-    const movieTitle = document.createElement("p");
-    movieTitle.classList.add("top5-title");
-    movieTitle.textContent = data[i].title;
-
-    const movieDescription = document.createElement("p");
-    movieDescription.classList.add("top5-description");
-    movieDescription.textContent = `${data[i].overview.substring(0, 75)} ...`;
-
-    const movieBtn = document.createElement("button");
-    movieBtn.classList.add("top5-btn");
-    movieBtn.setAttribute("data-id", data[i].id);
-    movieBtn.textContent = "More Info";
-    movieBtn.addEventListener("click", function () {
-      createMovieDetailsPage(this.dataset.id);
-    });
-
-    movieTextBoxDIV.appendChild(movieTitle);
-    movieTextBoxDIV.appendChild(movieDescription);
-    movieTextBoxDIV.appendChild(movieBtn);
-    movieDIV.appendChild(movieIMG);
-    movieDIV.appendChild(movieTextBoxDIV);
-    topMoviesDIV.appendChild(movieDIV);
-
-    top5Movies.appendChild(topMoviesDIV);
-  }
+  createTop5(data, ".top5-movies", "Movies", createMovieDetailsPage);
 }
 
 // CREATE TOP 5 SHOWS ON HOME PAGE ---------------------------------
@@ -161,58 +109,64 @@ async function createTop5Shows() {
   const response = await getApiData("tv/popular");
   const data = await response.results;
 
-  const top5Shows = document.querySelector(".top5-shows");
-  clearContainer(".home-page", ".top5-shows");
+  createTop5(data, ".top5-shows", "Shows", createShowDetailsPage);
+}
 
-  const topShowsDIV = document.createElement("div");
-  topShowsDIV.classList.add("top5-container");
+// CREATE TOP 5 CONTAINERS -----------------------------------------
+
+function createTop5(data, classSelector, subject, functionName) {
+  const top5Container = document.querySelector(classSelector);
+  clearContainer(".home-page", classSelector);
+
+  const mainDIV = document.createElement("div");
+  mainDIV.classList.add("top5-container");
 
   const sectionText = document.createElement("h3");
   sectionText.classList.add("top5-section-text");
-  sectionText.textContent = "Top 5 TV Shows";
+  sectionText.textContent = `Top 5 ${subject}`;
 
-  topShowsDIV.appendChild(sectionText);
+  mainDIV.appendChild(sectionText);
 
   for (let i = 0; i <= 4; i++) {
-    const showDIV = document.createElement("div");
-    showDIV.classList.add("top5-item");
-    showDIV.setAttribute("data-id", data[i].id);
+    const innerDIV = document.createElement("div");
+    innerDIV.classList.add("top5-item");
+    innerDIV.setAttribute("data-id", data[i].id);
 
-    const showIMG = document.createElement("img");
-    showIMG.classList.add("top5-img");
-    showIMG.setAttribute(
+    const subjectIMG = document.createElement("img");
+    subjectIMG.classList.add("top5-img");
+    subjectIMG.setAttribute(
       "src",
       `https://image.tmdb.org/t/p/w500${data[i].poster_path}`
     );
-    showIMG.setAttribute("alt", "tv show poster");
+    subjectIMG.setAttribute("alt", "movie poster");
 
-    const showTextBoxDIV = document.createElement("div");
-    showTextBoxDIV.classList.add("top5-text-box");
+    const subjectTextBox = document.createElement("div");
+    subjectTextBox.classList.add("top5-text-box");
 
-    const showTitle = document.createElement("p");
-    showTitle.classList.add("top5-title");
-    showTitle.textContent = data[i].name;
+    const subjectTitle = document.createElement("p");
+    subjectTitle.classList.add("top5-title");
+    subjectTitle.textContent = data[i].title ? data[i].title : data[i].name;
 
-    const showDescription = document.createElement("p");
-    showDescription.classList.add("top5-description");
-    showDescription.textContent = `${data[i].overview.substring(0, 75)} ...`;
+    const subjectDesc = document.createElement("p");
+    subjectDesc.classList.add("top5-description");
+    subjectDesc.textContent = `${data[i].overview.substring(0, 75)} ...`;
 
-    const showBtn = document.createElement("button");
-    showBtn.classList.add("top5-btn");
-    showBtn.setAttribute("data-id", data[i].id);
-    showBtn.textContent = "More Info";
-    showBtn.addEventListener("click", function () {
-      createShowDetailsPage(this.dataset.id);
+    const subjectBtn = document.createElement("button");
+    subjectBtn.classList.add("top5-btn");
+    subjectBtn.setAttribute("data-id", data[i].id);
+    subjectBtn.textContent = "More Info";
+    subjectBtn.addEventListener("click", function () {
+      functionName(this.dataset.id);
     });
 
-    showTextBoxDIV.appendChild(showTitle);
-    showTextBoxDIV.appendChild(showDescription);
-    showTextBoxDIV.appendChild(showBtn);
-    showDIV.appendChild(showIMG);
-    showDIV.appendChild(showTextBoxDIV);
-    topShowsDIV.appendChild(showDIV);
+    subjectTextBox.appendChild(subjectTitle);
+    subjectTextBox.appendChild(subjectDesc);
+    subjectTextBox.appendChild(subjectBtn);
+    innerDIV.appendChild(subjectIMG);
+    innerDIV.appendChild(subjectTextBox);
+    mainDIV.appendChild(innerDIV);
 
-    top5Shows.appendChild(topShowsDIV);
+    top5Container.appendChild(mainDIV);
   }
 }
 
