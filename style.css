@@ -228,6 +228,8 @@ body {
   overflow-y: scroll;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+
+  width: 108rem;
 }
 
 .main-content::-webkit-scrollbar {
@@ -360,9 +362,16 @@ body {
 
 /* ------------ Single Info Page ------------ */
 
+.single-page {
+  display: grid;
+  grid-template-columns: 1;
+  grid-template-rows: auto 1fr 8rem;
+  height: calc(100vh - 25%);
+}
+
 .selected-img {
   position: relative;
-  min-height: 48rem;
+  min-height: 32rem;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: top;

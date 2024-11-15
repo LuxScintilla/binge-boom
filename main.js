@@ -140,6 +140,9 @@ async function createTop5Movies() {
     movieBtn.classList.add("top5-btn");
     movieBtn.setAttribute("data-id", data[i].id);
     movieBtn.textContent = "More Info";
+    movieBtn.addEventListener("click", function () {
+      createMovieDetailsPage(this.dataset.id);
+    });
 
     movieTextBoxDIV.appendChild(movieTitle);
     movieTextBoxDIV.appendChild(movieDescription);
@@ -198,6 +201,9 @@ async function createTop5Shows() {
     showBtn.classList.add("top5-btn");
     showBtn.setAttribute("data-id", data[i].id);
     showBtn.textContent = "More Info";
+    showBtn.addEventListener("click", function () {
+      createShowDetailsPage(this.dataset.id);
+    });
 
     showTextBoxDIV.appendChild(showTitle);
     showTextBoxDIV.appendChild(showDescription);
@@ -314,6 +320,89 @@ async function movieDetailsPage(id) {
   selectedInfo.appendChild(originalLanguage);
 }
 
+// CREATE SINGLE SHOW INFO PAGE ON HOME PAGE ----------------------
+
+async function showDetailsPage(id) {
+  const data = await getApiData(`tv/${id}`);
+
+  const selectedIMG = document.querySelector(".selected-img");
+  selectedIMG.style.backgroundImage = `linear-gradient(to bottom, transparent, rgba(31, 32, 41)), url(https://image.tmdb.org/t/p/original${data.backdrop_path})`;
+
+  const titleContainer = document.createElement("div");
+  titleContainer.classList.add("selected-title-container");
+
+  const title = document.createElement("h2");
+  title.classList.add("selected-title");
+  title.textContent = data.name;
+
+  const btn = document.createElement("button");
+  btn.classList.add("selected-btn");
+  btn.setAttribute("data-id", data.id);
+  btn.textContent = "Add to Favourites";
+  btn.addEventListener("click", function () {
+    console.log("console favourites");
+  });
+
+  const selectedInfo = document.querySelector(".selected-info");
+
+  const stars = document.createElement("p");
+  stars.classList.add("selected-stars");
+  stars.innerHTML = `<i class="fa-solid fa-star"></i> ${Number.parseFloat(
+    data.vote_average
+  ).toFixed(1)} / 10`;
+
+  const releaseDate = document.createElement("p");
+  releaseDate.classList.add("selected-release");
+  const firstDate = new Date(data.first_air_date);
+  releaseDate.innerHTML = `<strong>Release Date:</strong> ${firstDate.getDate()} ${
+    months[firstDate.getMonth()]
+  } ${firstDate.getFullYear()}`;
+
+  const lastAirDate = document.createElement("p");
+  const lastDate = new Date(data.last_air_date);
+  lastAirDate.innerHTML = `<strong>Latest Air Date:</strong> ${lastDate.getDate()} ${
+    months[lastDate.getMonth()]
+  } ${lastDate.getFullYear()}`;
+
+  const description = document.createElement("p");
+  description.classList.add("selected-description");
+  description.innerHTML = `<strong>Description:</strong> ${data.overview}`;
+
+  const runtime = document.createElement("p");
+  runtime.innerHTML = `<strong>Episode Runtime:</strong> ${data.episode_run_time} minutes`;
+
+  const genres = document.createElement("p");
+  const genreText = [];
+  data.genres.forEach((genre) => genreText.push(genre.name));
+  if (genreText.length === 0) {
+    genres.innerHTML = `<strong>Genres:</strong> None`;
+  } else {
+    genres.innerHTML = `<strong>Genres:</strong> ${genreText.join(", ")}`;
+  }
+
+  const episodes = document.createElement("p");
+  episodes.innerHTML = `<strong>Episodes:</strong> ${data.number_of_episodes}`;
+
+  const seasons = document.createElement("p");
+  seasons.innerHTML = `<strong>Seasons:</strong> ${data.number_of_seasons}`;
+
+  const originalLanguage = document.createElement("p");
+  originalLanguage.innerHTML = `<strong>Original Language:</strong> ${data.original_language.toUpperCase()}`;
+
+  titleContainer.appendChild(title);
+  titleContainer.appendChild(btn);
+  selectedIMG.appendChild(titleContainer);
+  selectedInfo.appendChild(stars);
+  selectedInfo.appendChild(lastAirDate);
+  selectedInfo.appendChild(releaseDate);
+  selectedInfo.appendChild(description);
+  selectedInfo.appendChild(runtime);
+  selectedInfo.appendChild(genres);
+  selectedInfo.appendChild(episodes);
+  selectedInfo.appendChild(seasons);
+  selectedInfo.appendChild(originalLanguage);
+}
+
 // SHOW AND HIDE SPINNER -------------------------------------------
 
 function showSpinner() {
@@ -339,6 +428,7 @@ function clearContainer(parent, className) {
 
 function createHome() {
   const singlePage = document.querySelector(".single-page");
+  singlePage.style.display = "none";
   singlePage.classList.add("hidden");
 
   createFeatured();
@@ -364,6 +454,25 @@ function createMovieDetailsPage(id) {
   createFooter(".single-page");
 
   const singlePage = document.querySelector(".single-page");
+  singlePage.style.display = "grid";
+  singlePage.classList.remove("hidden");
+}
+
+// CREATE SHOW DETAILS PAGE ---------------------------------------
+
+function createShowDetailsPage(id) {
+  const homePage = document.querySelector(".home-page");
+  homePage.classList.add("hidden");
+
+  clearContainer(".single-page", ".selected-img");
+  clearContainer(".single-page", ".selected-info");
+  clearContainer(".single-page", ".footer");
+
+  showDetailsPage(id);
+  createFooter(".single-page");
+
+  const singlePage = document.querySelector(".single-page");
+  singlePage.style.display = "grid";
   singlePage.classList.remove("hidden");
 }
 
