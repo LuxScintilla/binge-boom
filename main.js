@@ -29,7 +29,7 @@ function generateRandomNumber() {
 
 // GET  DATA FROM THE TMDB API --------------------------------------
 
-async function getApiData(endpoint, page) {
+async function getApiData(endpoint) {
   const options = {
     method: "GET",
     headers: {
@@ -42,7 +42,7 @@ async function getApiData(endpoint, page) {
   showSpinner();
 
   const response = await fetch(
-    `https://api.themoviedb.org/3/${endpoint}?language=en-US&page=${page}`,
+    `https://api.themoviedb.org/3/${endpoint}`,
     options
   );
   const data = await response.json();
@@ -68,9 +68,10 @@ function hideSpinner() {
 
 function createHome() {
   clearContainer();
-  setupGrid("3");
+  setupGrid("4");
   createSwiper();
-  createCategory("Top 5 Movies");
+  createCategory("Top 5 Movies", 5, "movie/popular");
+  createCategory("Top 5 Shows", 5, "tv/popular");
   createFooter();
 }
 
@@ -87,9 +88,8 @@ function setupGrid(number) {
 // CREATE SWIPER --------------------------------------------------
 
 async function createSwiper() {
-  const response = await getApiData("movie/now_playing", "1");
+  const response = await getApiData("movie/now_playing");
   const data = response.results;
-  console.log(data);
 
   const swiper = document.createElement("div");
   swiper.classList.add("swiper");
@@ -109,9 +109,9 @@ async function createSwiper() {
     title.classList.add("swiper-item-title");
     title.textContent = movie.title;
 
-    const desc = document.createElement("p");
-    desc.classList.add("swiper-item-description");
-    desc.textContent = movie.overview;
+    const description = document.createElement("p");
+    description.classList.add("swiper-item-description");
+    description.textContent = movie.overview;
 
     const btn = document.createElement("button");
     btn.classList.add("swiper-item-btn");
@@ -119,7 +119,7 @@ async function createSwiper() {
     btn.textContent = "More Info";
 
     item.appendChild(title);
-    item.appendChild(desc);
+    item.appendChild(description);
     item.appendChild(btn);
     swiperSlide.appendChild(item);
     swiperWrapper.appendChild(swiperSlide);
@@ -145,7 +145,7 @@ function initSwiper() {
 
 // CREATE SECTION CONTAINER -----------------------------------------
 
-async function createCategory(title) {
+async function createCategory(title, amount, endpoint) {
   const div = document.createElement("div");
   div.classList.add("category");
 
@@ -155,8 +155,7 @@ async function createCategory(title) {
 
   div.appendChild(divTitle);
 
-  const cards = await createCards(5);
-  console.log(cards);
+  const cards = await createCards(amount, endpoint);
   div.appendChild(cards);
 
   mainContent.appendChild(div);
@@ -164,18 +163,30 @@ async function createCategory(title) {
 
 // CREATE CARDS -----------------------------------------------------
 
-async function createCards(amount) {
-  const response = await getApiData("movie/popular", "1");
+async function createCards(amount, endpoint) {
+  const response = await getApiData(endpoint);
   const data = response.results;
 
   const div = document.createElement("div");
   div.classList.add("card-container");
 
   for (i = 0; i < amount; i++) {
-    console.log(data[i]);
-
     const card = document.createElement("div");
     card.classList.add("card");
+
+    const link = document.createElement("a");
+    link.setAttribute("data-id", data[i].id);
+    link.addEventListener("click", function () {
+      clearContainer();
+      setupGrid("2");
+      if (data[i].title) {
+        createDetails(`movie/${this.dataset.id}`);
+      }
+      if (data[i].name) {
+        createDetails(`tv/${this.dataset.id}`);
+      }
+      createFooter();
+    });
 
     const img = document.createElement("img");
     img.classList.add("card-img");
@@ -184,11 +195,146 @@ async function createCards(amount) {
       `https://image.tmdb.org/t/p/original${data[i].poster_path}`
     );
 
-    card.appendChild(img);
+    link.appendChild(img);
+    card.appendChild(link);
     div.appendChild(card);
   }
 
   return div;
+}
+
+// CREATE DETAILS PAGE ----------------------------------------------
+
+async function createDetails(endpoint) {
+  const data = await getApiData(endpoint);
+
+  const details = document.createElement("div");
+  details.classList.add("details");
+  details.style.backgroundImage = `linear-gradient(to bottom, transparent, rgba(31, 32, 41)), url(https://image.tmdb.org/t/p/original${data.backdrop_path})`;
+
+  if (data.title) {
+    const title = document.createElement("h2");
+    title.classList.add("details-title");
+    title.textContent = data.title;
+
+    const description = document.createElement("p");
+    description.classList.add("details-description");
+    description.textContent = data.overview;
+
+    const btn = document.createElement("button");
+    btn.classList.add("details-btn");
+    btn.setAttribute("data-id", data.id);
+    btn.textContent = "Add to Favourites";
+    btn.addEventListener("click", function () {
+      console.log("console favourites");
+    });
+
+    const stars = document.createElement("p");
+    stars.classList.add("details-stars");
+    stars.innerHTML = `<i class="fa-solid fa-star"></i> ${Number.parseFloat(
+      data.vote_average
+    ).toFixed(1)} / 10`;
+
+    const releaseDate = document.createElement("p");
+    releaseDate.classList.add("details-release");
+    const date = new Date(data.release_date);
+    releaseDate.innerHTML = `<strong>Release Date:</strong> ${date.getDate()} ${
+      months[date.getMonth()]
+    } ${date.getFullYear()}`;
+
+    const runtime = document.createElement("p");
+    runtime.innerHTML = `<strong>Runtime:</strong> ${
+      data.runtime.length > 0 ? data.runtime + " minutes" : "No Data"
+    }`;
+
+    const genres = document.createElement("p");
+    const genreText = [];
+    data.genres.forEach((genre) => genreText.push(genre.name));
+    genres.innerHTML = `<strong>Genres:</strong> ${genreText.join(", ")}`;
+
+    const originalLanguage = document.createElement("p");
+    originalLanguage.innerHTML = `<strong>Original Language:</strong> ${data.original_language.toUpperCase()}`;
+
+    details.appendChild(title);
+    details.appendChild(description);
+    details.appendChild(btn);
+    details.appendChild(stars);
+    details.appendChild(releaseDate);
+    details.appendChild(runtime);
+    details.appendChild(genres);
+    details.appendChild(originalLanguage);
+    mainContent.appendChild(details);
+  }
+  if (data.name) {
+    const title = document.createElement("h2");
+    title.classList.add("details-title");
+    title.textContent = data.name;
+
+    const description = document.createElement("p");
+    description.classList.add("details-description");
+    description.textContent = data.overview;
+
+    const btn = document.createElement("button");
+    btn.classList.add("details-btn");
+    btn.setAttribute("data-id", data.id);
+    btn.textContent = "Add to Favourites";
+    btn.addEventListener("click", function () {
+      console.log("console favourites");
+    });
+
+    const stars = document.createElement("p");
+    stars.classList.add("details-stars");
+    stars.innerHTML = `<i class="fa-solid fa-star"></i> ${Number.parseFloat(
+      data.vote_average
+    ).toFixed(1)} / 10`;
+
+    const lastAirDate = document.createElement("p");
+    const lastDate = new Date(data.last_air_date);
+    lastAirDate.innerHTML = `<strong>Latest Air Date:</strong> ${lastDate.getDate()} ${
+      months[lastDate.getMonth()]
+    } ${lastDate.getFullYear()}`;
+
+    const releaseDate = document.createElement("p");
+    releaseDate.classList.add("details-release");
+    const firstDate = new Date(data.first_air_date);
+    releaseDate.innerHTML = `<strong>Release Date:</strong> ${firstDate.getDate()} ${
+      months[firstDate.getMonth()]
+    } ${firstDate.getFullYear()}`;
+
+    const runtime = document.createElement("p");
+    runtime.innerHTML = `<strong>Runtime:</strong> ${
+      data.episode_run_time.length > 0
+        ? data.episode_run_time + " minutes"
+        : "No Data"
+    }`;
+
+    const genres = document.createElement("p");
+    const genreText = [];
+    data.genres.forEach((genre) => genreText.push(genre.name));
+    genres.innerHTML = `<strong>Genres:</strong> ${genreText.join(", ")}`;
+
+    const episodes = document.createElement("p");
+    episodes.innerHTML = `<strong>Episodes:</strong> ${data.number_of_episodes}`;
+
+    const seasons = document.createElement("p");
+    seasons.innerHTML = `<strong>Seasons:</strong> ${data.number_of_seasons}`;
+
+    const originalLanguage = document.createElement("p");
+    originalLanguage.innerHTML = `<strong>Original Language:</strong> ${data.original_language.toUpperCase()}`;
+
+    details.appendChild(title);
+    details.appendChild(description);
+    details.appendChild(btn);
+    details.appendChild(stars);
+    details.appendChild(lastAirDate);
+    details.appendChild(releaseDate);
+    details.appendChild(runtime);
+    details.appendChild(genres);
+    details.appendChild(episodes);
+    details.appendChild(seasons);
+    details.appendChild(originalLanguage);
+    mainContent.appendChild(details);
+  }
 }
 
 // CREATE FOOTER AT BOTTOM OF THE PAGE ------------------------------
