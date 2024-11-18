@@ -16,14 +16,18 @@
       href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
-
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
     <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script defer src="main.js"></script>
   </head>
   <body>
     <div class="main-container">
-      <section class="side-menu">
-        <div class="side-menu-header">
+      <section class="menu">
+        <div class="menu-header">
           <i class="fa-solid fa-tv"></i>
           <h1 class="logo-title">BingeBoom</h1>
         </div>
@@ -66,7 +70,7 @@
           </ul>
         </div>
       </section>
-      <section class="top-menu">
+      <section class="search">
         <div class="search-container">
           <input
             type="text"
@@ -101,29 +105,10 @@
           />
           <label class="radio-label" for="shows">Shows</label>
         </form>
-        <div class="profile-container">
-          <img
-            class="profile-avatar"
-            src="./img/cute.webp"
-            alt="profile avatar"
-          />
-        </div>
       </section>
 
       <section class="main-content">
-        <div class="home-page">
-          <div class="featured"></div>
-          <div class="top5-movies"></div>
-          <div class="top5-shows"></div>
-          <div class="footer"></div>
-        </div>
-
-        <div class="single-page">
-          <div class="selected-img"></div>
-          <div class="selected-info"></div>
-          <div class="footer"></div>
-        </div>
-
+        <div class="content"></div>
         <div class="spinner"></div>
       </section>
     </div>
