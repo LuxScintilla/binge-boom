@@ -274,13 +274,14 @@ async function createCards(amount, endpoint) {
 
     const link = document.createElement("a");
     link.setAttribute("data-id", data[i].id);
+    link.setAttribute("data-type", data[i].title ? "movie" : "tv");
     link.addEventListener("click", function () {
       clearContainer();
       setupGrid("2");
-      if (data[i].title) {
+      if (this.dataset.type === "movie") {
         createDetails(`movie/${this.dataset.id}`);
       }
-      if (data[i].name) {
+      if (this.dataset.type === "tv") {
         createDetails(`tv/${this.dataset.id}`);
       }
       createFooter();
@@ -305,6 +306,7 @@ async function createCards(amount, endpoint) {
 
 async function createDetails(endpoint) {
   const data = await getApiData(endpoint);
+  console.log(data);
 
   const details = document.createElement("div");
   details.classList.add("details");
