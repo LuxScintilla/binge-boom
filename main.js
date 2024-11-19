@@ -5,6 +5,9 @@ const topRatedBtn = document.querySelector(".menu-link-toprated");
 const upcomingBtn = document.querySelector(".menu-link-upcoming");
 
 homeBtn.addEventListener("click", createHome);
+popularBtn.addEventListener("click", function () {
+  createPopular("Movies");
+});
 
 const months = [
   "January",
@@ -77,6 +80,25 @@ function createHome() {
 
 createHome();
 
+// CREATE POPULAR PAGE ---------------------------------------------
+
+function createPopular(e) {
+  if (e === "Movies") {
+    clearContainer();
+    setupGrid("3");
+    createDropdown(e);
+    createCategory("Popular Movies", 20, "movie/popular");
+    createFooter();
+  }
+  if (e === "TV Shows") {
+    clearContainer();
+    setupGrid("3");
+    createDropdown(e);
+    createCategory("Popular TV Shows", 20, "tv/popular");
+    createFooter();
+  }
+}
+
 // SETUP GRID -----------------------------------------------------
 
 function setupGrid(number) {
@@ -117,6 +139,12 @@ async function createSwiper() {
     btn.classList.add("swiper-item-btn");
     btn.setAttribute("data-id", movie.id);
     btn.textContent = "More Info";
+    btn.addEventListener("click", function () {
+      clearContainer();
+      setupGrid("2");
+      createDetails(`movie/${this.dataset.id}`);
+      createFooter();
+    });
 
     item.appendChild(title);
     item.appendChild(description);
@@ -143,7 +171,45 @@ function initSwiper() {
   });
 }
 
-// CREATE SECTION CONTAINER -----------------------------------------
+// CREATE DROPDOWN BOX -----------------------------------------------
+
+function createDropdown(e) {
+  const div = document.createElement("div");
+  div.classList.add("dropdown");
+
+  const form = document.createElement("form");
+  form.addEventListener("change", function (e) {
+    createPopular(e.target.value);
+  });
+
+  const label = document.createElement("label");
+  label.classList.add("dropdown-label");
+  label.textContent = "Category:";
+
+  const select = document.createElement("select");
+  select.classList.add("dropdown-select");
+
+  const option1 = document.createElement("option");
+  option1.setAttribute("value", "Movies");
+  option1.textContent = "Movies";
+
+  const option2 = document.createElement("option");
+  option2.setAttribute("value", "TV Shows");
+  option2.textContent = "TV Shows";
+
+  e === "Movies"
+    ? option1.setAttribute("selected", "")
+    : option2.setAttribute("selected", "");
+
+  select.appendChild(option1);
+  select.appendChild(option2);
+  form.appendChild(label);
+  form.appendChild(select);
+  div.appendChild(form);
+  mainContent.appendChild(div);
+}
+
+// CREATE CATEGORY CONTAINER -----------------------------------------
 
 async function createCategory(title, amount, endpoint) {
   const div = document.createElement("div");

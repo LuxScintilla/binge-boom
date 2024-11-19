@@ -139,6 +139,10 @@ body {
   background-color: var(--accent-1);
 }
 
+.menu-list-item:active {
+  background-color: var(--accent-2);
+}
+
 .menu-list-item:hover > a,
 .menu-list-item:hover > i {
   color: #ffffff;
@@ -202,7 +206,7 @@ body {
 }
 
 .search-input {
-  border: none;
+  border: 1px solid var(--divider);
   background-color: transparent;
   width: 32rem;
   padding: 0.8rem;
@@ -327,6 +331,28 @@ body {
 .card-img:hover {
   transform: scale(1.2);
   box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* ------------ Dropdown ------------ */
+
+.dropdown {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--main-padding);
+  padding-right: var(--main-padding);
+}
+
+.dropdown-label {
+  font-size: 1.6rem;
+  margin-right: 0.8rem;
+}
+
+.dropdown-select {
+  border: 1px solid var(--divider);
+  background-color: transparent;
+  color: var(--text);
+  padding: 0.8rem;
+  border-radius: 1.6rem;
 }
 
 /* ------------ Details ------------ */
