@@ -8,6 +8,10 @@ homeBtn.addEventListener("click", createHome);
 popularBtn.addEventListener("click", function () {
   createPopular("Movies");
 });
+topRatedBtn.addEventListener("click", function () {
+  createTopRated("Movies");
+});
+upcomingBtn.addEventListener("click", createUpcoming);
 
 const months = [
   "January",
@@ -86,17 +90,45 @@ function createPopular(e) {
   if (e === "Movies") {
     clearContainer();
     setupGrid("3");
-    createDropdown(e);
+    createDropdown(e, createPopular);
     createCategory("Popular Movies", 20, "movie/popular");
     createFooter();
   }
   if (e === "TV Shows") {
     clearContainer();
     setupGrid("3");
-    createDropdown(e);
+    createDropdown(e, createPopular);
     createCategory("Popular TV Shows", 20, "tv/popular");
     createFooter();
   }
+}
+
+// CREATE TOP RATED PAGE -------------------------------------------
+
+function createTopRated(e) {
+  if (e === "Movies") {
+    clearContainer();
+    setupGrid("3");
+    createDropdown(e, createTopRated);
+    createCategory("Top Rated Movies", 20, "movie/top_rated");
+    createFooter();
+  }
+  if (e === "TV Shows") {
+    clearContainer();
+    setupGrid("3");
+    createDropdown(e, createTopRated);
+    createCategory("Top Rated TV Shows", 20, "tv/top_rated");
+    createFooter();
+  }
+}
+
+// CREATE uPCOMING PAGE --------------------------------------------
+
+function createUpcoming() {
+  clearContainer();
+  setupGrid("2");
+  createCategory("Upcoming Movies", 20, "movie/upcoming");
+  createFooter();
 }
 
 // SETUP GRID -----------------------------------------------------
@@ -173,13 +205,13 @@ function initSwiper() {
 
 // CREATE DROPDOWN BOX -----------------------------------------------
 
-function createDropdown(e) {
+function createDropdown(e, myFunction) {
   const div = document.createElement("div");
   div.classList.add("dropdown");
 
   const form = document.createElement("form");
   form.addEventListener("change", function (e) {
-    createPopular(e.target.value);
+    myFunction(e.target.value);
   });
 
   const label = document.createElement("label");
