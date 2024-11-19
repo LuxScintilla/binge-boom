@@ -4,14 +4,22 @@ const popularBtn = document.querySelector(".menu-link-popular");
 const topRatedBtn = document.querySelector(".menu-link-toprated");
 const upcomingBtn = document.querySelector(".menu-link-upcoming");
 
-homeBtn.addEventListener("click", createHome);
+homeBtn.addEventListener("click", function () {
+  assignActive(this);
+  createHome();
+});
 popularBtn.addEventListener("click", function () {
+  assignActive(this);
   createPopular("Movies");
 });
 topRatedBtn.addEventListener("click", function () {
+  assignActive(this);
   createTopRated("Movies");
 });
-upcomingBtn.addEventListener("click", createUpcoming);
+upcomingBtn.addEventListener("click", function () {
+  assignActive(this);
+  createUpcoming();
+});
 
 const months = [
   "January",
@@ -27,6 +35,26 @@ const months = [
   "November",
   "December",
 ];
+
+// ASSIGN ACTIVE CLASS ----------------------------------------------
+
+function assignActive(element) {
+  const array = [
+    "menu-link-home",
+    "menu-link-popular",
+    "menu-link-toprated",
+    "menu-link-upcoming",
+  ];
+  array.forEach((item) => {
+    if (item === element.className) {
+      element.parentElement.classList.add("active");
+    } else {
+      document
+        .querySelector(`.${item}`)
+        .parentElement.classList.remove("active");
+    }
+  });
+}
 
 // GENERATE RANDOM NUMBER FROM 0 TO 19 ------------------------------
 
