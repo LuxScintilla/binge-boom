@@ -37,7 +37,7 @@ body {
   background-image: linear-gradient(
       to bottom,
       rgba(0, 0, 0, 0.95),
-      rgba(42, 44, 53, 0.8),
+      rgba(0, 0, 0, 0.8),
       rgba(0, 0, 0, 0.95)
     ),
     url("./img/movies_collage.jpg");
@@ -360,6 +360,7 @@ body {
 /* ------------ Pagination ------------ */
 
 .pagination {
+  grid-row-end: -2;
   display: flex;
   align-items: center;
   gap: 1.6rem;

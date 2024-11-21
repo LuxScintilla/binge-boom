@@ -6,19 +6,19 @@ const upcomingBtn = document.querySelector(".menu-link-upcoming");
 
 homeBtn.addEventListener("click", function () {
   assignActive(this);
-  createHome();
+  createHome(1);
 });
 popularBtn.addEventListener("click", function () {
   assignActive(this);
-  createPopular("Movies");
+  createPopular("Movies", 1);
 });
 topRatedBtn.addEventListener("click", function () {
   assignActive(this);
-  createTopRated("Movies");
+  createTopRated("Movies", 1);
 });
 upcomingBtn.addEventListener("click", function () {
   assignActive(this);
-  createUpcoming();
+  createUpcoming(1);
 });
 
 const months = [
@@ -101,66 +101,66 @@ function hideSpinner() {
 
 // CREATE HOME PAGE -----------------------------------------------
 
-function createHome() {
+function createHome(page) {
   clearContainer();
   setupGrid("4");
   createSwiper();
-  createCategory("Top 5 Movies", 5, "movie/popular");
-  createCategory("Top 5 Shows", 5, "tv/popular");
+  createCategory("Top 5 Movies", 5, "movie/popular", page);
+  createCategory("Top 5 Shows", 5, "tv/popular", page);
   createFooter();
 }
 
-createHome();
+createHome(1);
 
 // CREATE POPULAR PAGE ---------------------------------------------
 
-function createPopular(e) {
+function createPopular(e, page) {
   if (e === "Movies") {
     clearContainer();
     setupGrid("4");
     createDropdown(e, createPopular);
-    createCategory("Popular Movies", 20, "movie/popular");
-    createPagination("movie/popular", 1);
+    createCategory("Popular Movies", 20, "movie/popular", page);
+    createPagination("movie/popular", page);
     createFooter();
   }
   if (e === "TV Shows") {
     clearContainer();
     setupGrid("4");
     createDropdown(e, createPopular);
-    createCategory("Popular TV Shows", 20, "tv/popular");
-    createPagination("tv/popular", 1);
+    createCategory("Popular TV Shows", 20, "tv/popular", page);
+    createPagination("tv/popular", page);
     createFooter();
   }
 }
 
 // CREATE TOP RATED PAGE -------------------------------------------
 
-function createTopRated(e) {
+function createTopRated(e, page) {
   if (e === "Movies") {
     clearContainer();
     setupGrid("4");
     createDropdown(e, createTopRated);
-    createCategory("Top Rated Movies", 20, "movie/top_rated");
-    createPagination("movie/top_rated", 1);
+    createCategory("Top Rated Movies", 20, "movie/top_rated", page);
+    createPagination("movie/top_rated", page);
     createFooter();
   }
   if (e === "TV Shows") {
     clearContainer();
     setupGrid("4");
     createDropdown(e, createTopRated);
-    createCategory("Top Rated TV Shows", 20, "tv/top_rated");
-    createPagination("tv/top_rated", 1);
+    createCategory("Top Rated TV Shows", 20, "tv/top_rated", page);
+    createPagination("tv/top_rated", page);
     createFooter();
   }
 }
 
 // CREATE uPCOMING PAGE --------------------------------------------
 
-function createUpcoming() {
+function createUpcoming(page) {
   clearContainer();
   setupGrid("3");
-  createCategory("Upcoming Movies", 20, "movie/upcoming");
-  createPagination("movie/upcoming", 1);
+  createCategory("Upcoming Movies", 20, "movie/upcoming", page);
+  createPagination("movie/upcoming", page);
   createFooter();
 }
 
@@ -244,7 +244,7 @@ function createDropdown(e, myFunction) {
 
   const form = document.createElement("form");
   form.addEventListener("change", function (e) {
-    myFunction(e.target.value);
+    myFunction(e.target.value, 1);
   });
 
   const label = document.createElement("label");
@@ -277,9 +277,10 @@ function createDropdown(e, myFunction) {
 // CREATE PAGINATION -------------------------------------------------
 
 const pageObject = async function (endpoint, page) {
-  const response = await getApiData(`${endpoint}?page=${page}`);
+  const response = await getApiData(`${endpoint}?language=en-US&page=${page}`);
   const state = {
-    currentPage: 1,
+    endPoint: endpoint,
+    currentPage: page,
     totalPages: response.total_pages,
   };
   return state;
@@ -287,7 +288,6 @@ const pageObject = async function (endpoint, page) {
 
 async function createPagination(endpoint, page) {
   const state = await pageObject(endpoint, page);
-  console.log(state);
 
   const div = document.createElement("div");
   div.classList.add("pagination");
@@ -295,10 +295,40 @@ async function createPagination(endpoint, page) {
   const btnPrevious = document.createElement("button");
   btnPrevious.classList.add("pagination-btn");
   btnPrevious.innerHTML = `<i class="fa-solid fa-arrow-left"></i>`;
+  btnPrevious.addEventListener("click", function () {
+    if (state.currentPage === 1) {
+      return;
+    } else if (state.endPoint === "movie/popular") {
+      createPopular("Movies", state.currentPage - 1);
+    } else if (state.endPoint === "tv/popular") {
+      createPopular("TV Shows", state.currentPage - 1);
+    } else if (state.endPoint === "movie/top_rated") {
+      createTopRated("Movies", state.currentPage - 1);
+    } else if (state.endPoint === "tv/top_rated") {
+      createTopRated("TV Shows", state.currentPage - 1);
+    } else if (state.endPoint === "movie/upcoming") {
+      createUpcoming(state.currentPage - 1);
+    }
+  });
 
   const btnNext = document.createElement("button");
   btnNext.classList.add("pagination-btn");
   btnNext.innerHTML = `<i class="fa-solid fa-arrow-right"></i>`;
+  btnNext.addEventListener("click", function () {
+    if (state.currentPage === state.totalPages) {
+      return;
+    } else if (state.endPoint === "movie/popular") {
+      createPopular("Movies", state.currentPage + 1);
+    } else if (state.endPoint === "tv/popular") {
+      createPopular("TV Shows", state.currentPage + 1);
+    } else if (state.endPoint === "movie/top_rated") {
+      createTopRated("Movies", state.currentPage + 1);
+    } else if (state.endPoint === "tv/top_rated") {
+      createTopRated("TV Shows", state.currentPage + 1);
+    } else if (state.endPoint === "movie/upcoming") {
+      createUpcoming(state.currentPage + 1);
+    }
+  });
 
   const pageText = document.createElement("p");
   pageText.classList.add("pagination-text");
@@ -314,7 +344,7 @@ async function createPagination(endpoint, page) {
 
 // CREATE CATEGORY CONTAINER -----------------------------------------
 
-async function createCategory(title, amount, endpoint) {
+async function createCategory(title, amount, endpoint, page) {
   const div = document.createElement("div");
   div.classList.add("category");
 
@@ -324,7 +354,7 @@ async function createCategory(title, amount, endpoint) {
 
   div.appendChild(divTitle);
 
-  const cards = await createCards(amount, endpoint);
+  const cards = await createCards(amount, endpoint, page);
   div.appendChild(cards);
 
   mainContent.appendChild(div);
@@ -332,8 +362,8 @@ async function createCategory(title, amount, endpoint) {
 
 // CREATE CARDS -----------------------------------------------------
 
-async function createCards(amount, endpoint) {
-  const response = await getApiData(endpoint);
+async function createCards(amount, endpoint, page) {
+  const response = await getApiData(`${endpoint}?language=en-US&page=${page}`);
   const data = response.results;
 
   const div = document.createElement("div");
@@ -377,7 +407,6 @@ async function createCards(amount, endpoint) {
 
 async function createDetails(endpoint) {
   const data = await getApiData(endpoint);
-  console.log(data);
 
   const details = document.createElement("div");
   details.classList.add("details");
