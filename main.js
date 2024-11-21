@@ -117,16 +117,18 @@ createHome();
 function createPopular(e) {
   if (e === "Movies") {
     clearContainer();
-    setupGrid("3");
+    setupGrid("4");
     createDropdown(e, createPopular);
     createCategory("Popular Movies", 20, "movie/popular");
+    createPagination("movie/popular", 1);
     createFooter();
   }
   if (e === "TV Shows") {
     clearContainer();
-    setupGrid("3");
+    setupGrid("4");
     createDropdown(e, createPopular);
     createCategory("Popular TV Shows", 20, "tv/popular");
+    createPagination("tv/popular", 1);
     createFooter();
   }
 }
@@ -136,16 +138,18 @@ function createPopular(e) {
 function createTopRated(e) {
   if (e === "Movies") {
     clearContainer();
-    setupGrid("3");
+    setupGrid("4");
     createDropdown(e, createTopRated);
     createCategory("Top Rated Movies", 20, "movie/top_rated");
+    createPagination("movie/top_rated", 1);
     createFooter();
   }
   if (e === "TV Shows") {
     clearContainer();
-    setupGrid("3");
+    setupGrid("4");
     createDropdown(e, createTopRated);
     createCategory("Top Rated TV Shows", 20, "tv/top_rated");
+    createPagination("tv/top_rated", 1);
     createFooter();
   }
 }
@@ -154,8 +158,9 @@ function createTopRated(e) {
 
 function createUpcoming() {
   clearContainer();
-  setupGrid("2");
+  setupGrid("3");
   createCategory("Upcoming Movies", 20, "movie/upcoming");
+  createPagination("movie/upcoming", 1);
   createFooter();
 }
 
@@ -266,6 +271,44 @@ function createDropdown(e, myFunction) {
   form.appendChild(label);
   form.appendChild(select);
   div.appendChild(form);
+  mainContent.appendChild(div);
+}
+
+// CREATE PAGINATION -------------------------------------------------
+
+const pageObject = async function (endpoint, page) {
+  const response = await getApiData(`${endpoint}?page=${page}`);
+  const state = {
+    currentPage: 1,
+    totalPages: response.total_pages,
+  };
+  return state;
+};
+
+async function createPagination(endpoint, page) {
+  const state = await pageObject(endpoint, page);
+  console.log(state);
+
+  const div = document.createElement("div");
+  div.classList.add("pagination");
+
+  const btnPrevious = document.createElement("button");
+  btnPrevious.classList.add("pagination-btn");
+  btnPrevious.innerHTML = `<i class="fa-solid fa-arrow-left"></i>`;
+
+  const btnNext = document.createElement("button");
+  btnNext.classList.add("pagination-btn");
+  btnNext.innerHTML = `<i class="fa-solid fa-arrow-right"></i>`;
+
+  const pageText = document.createElement("p");
+  pageText.classList.add("pagination-text");
+  pageText.innerHTML = `
+    <span>${state.currentPage}</span> of ${state.totalPages}
+  `;
+
+  div.appendChild(btnPrevious);
+  div.appendChild(pageText);
+  div.appendChild(btnNext);
   mainContent.appendChild(div);
 }
 

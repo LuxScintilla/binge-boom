@@ -324,6 +324,7 @@ body {
 
 .card-img {
   width: 100%;
+  border-radius: 0.8rem;
   cursor: pointer;
   transition: all 0.2s ease-out;
 }
@@ -353,6 +354,40 @@ body {
   color: var(--text);
   padding: 0.8rem;
   border-radius: 1.6rem;
+  cursor: pointer;
+}
+
+/* ------------ Pagination ------------ */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  padding: var(--main-padding);
+}
+
+.pagination-btn {
+  border: none;
+  padding: 0.8rem;
+  border-radius: 0.8rem;
+  background-color: var(--accent-2);
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+
+.pagination-btn:hover {
+  background-color: var(--accent-1);
+}
+
+.pagination-text {
+  color: var(--sub-text);
+  font-size: 1.6rem;
+}
+
+.pagination-text > span {
+  color: var(--accent-2);
+  font-weight: bolder;
 }
 
 /* ------------ Details ------------ */
