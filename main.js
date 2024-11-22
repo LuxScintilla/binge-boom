@@ -4,28 +4,40 @@ const popularBtn = document.querySelector(".menu-link-popular");
 const topRatedBtn = document.querySelector(".menu-link-toprated");
 const upcomingBtn = document.querySelector(".menu-link-upcoming");
 const searchInput = document.querySelector(".search-input");
-const searchBtn = document.querySelector(".search-btn");
 
 homeBtn.addEventListener("click", function () {
   assignActive(this);
   createHome(1);
+  searchInput.value = "";
 });
 popularBtn.addEventListener("click", function () {
   assignActive(this);
   createPopular("Movies", 1);
+  searchInput.value = "";
 });
 topRatedBtn.addEventListener("click", function () {
   assignActive(this);
   createTopRated("Movies", 1);
+  searchInput.value = "";
 });
 upcomingBtn.addEventListener("click", function () {
   assignActive(this);
   createUpcoming(1);
+  searchInput.value = "";
 });
 
+let executeSearch = null;
 searchInput.addEventListener("keyup", function (e) {
-  console.log(e.target.value);
-  createSearchResults("Movies", e.target.value, 1);
+  clearTimeout(executeSearch);
+
+  executeSearch = setTimeout(() => {
+    if (e.target.value === "") {
+      assignActive(homeBtn);
+      createHome(1);
+    } else {
+      createSearchResults("Movies", e.target.value, 1);
+    }
+  }, 1000);
 });
 
 const months = [
@@ -125,7 +137,7 @@ function createPopular(media, page) {
   if (media === "Movies") {
     clearContainer();
     setupGrid("4");
-    createDropdown(media, createPopular);
+    createDropdown(media, createPopular, false);
     createCategory("Popular Movies", 20, "movie/popular?language=en-US", page);
     createPagination("movie/popular?language=en-US", page);
     createFooter();
@@ -133,7 +145,7 @@ function createPopular(media, page) {
   if (media === "TV Shows") {
     clearContainer();
     setupGrid("4");
-    createDropdown(media, createPopular);
+    createDropdown(media, createPopular, false);
     createCategory("Popular TV Shows", 20, "tv/popular?language=en-US", page);
     createPagination("tv/popular?language=en-US", page);
     createFooter();
@@ -146,7 +158,7 @@ function createTopRated(media, page) {
   if (media === "Movies") {
     clearContainer();
     setupGrid("4");
-    createDropdown(media, createTopRated);
+    createDropdown(media, createTopRated, false);
     createCategory(
       "Top Rated Movies",
       20,
@@ -159,7 +171,7 @@ function createTopRated(media, page) {
   if (media === "TV Shows") {
     clearContainer();
     setupGrid("4");
-    createDropdown(media, createTopRated);
+    createDropdown(media, createTopRated, false);
     createCategory(
       "Top Rated TV Shows",
       20,
@@ -187,7 +199,7 @@ function createSearchResults(media, searchQuery, page) {
   if (media === "Movies") {
     clearContainer();
     setupGrid("4");
-    createDropdown(media, createSearchResults);
+    createDropdown(media, createSearchResults, true);
     createCategory(
       `Search results for ${searchQuery}`,
       20,
@@ -196,11 +208,12 @@ function createSearchResults(media, searchQuery, page) {
     );
     createPagination(`search/movie?query=${searchQuery}`, page);
     createFooter();
+    assignActive("none");
   }
   if (media === "TV Shows") {
     clearContainer();
     setupGrid("4");
-    createDropdown(media, createSearchResults);
+    createDropdown(media, createSearchResults, true);
     createCategory(
       `Search results for ${searchQuery}`,
       20,
@@ -209,6 +222,7 @@ function createSearchResults(media, searchQuery, page) {
     );
     createPagination(`search/tv?query=${searchQuery}`, page);
     createFooter();
+    assignActive("none");
   }
 }
 
@@ -286,13 +300,18 @@ function initSwiper() {
 
 // CREATE DROPDOWN BOX -----------------------------------------------
 
-function createDropdown(media, myFunction) {
+function createDropdown(media, myFunction, boolean) {
   const div = document.createElement("div");
   div.classList.add("dropdown");
 
   const form = document.createElement("form");
   form.addEventListener("change", function (e) {
-    myFunction(e.target.value, 1);
+    if (boolean === false) {
+      myFunction(e.target.value, 1);
+    }
+    if (boolean === true) {
+      createSearchResults(e.target.value, searchInput.value, 1);
+    }
   });
 
   const label = document.createElement("label");
@@ -332,7 +351,6 @@ const pageObject = async function (endpoint, page) {
     currentPage: page,
     totalPages: response.total_pages,
   };
-  console.log(state);
   return state;
 };
 
@@ -403,62 +421,76 @@ async function createPagination(endpoint, page) {
 // CREATE CATEGORY CONTAINER -----------------------------------------
 
 async function createCategory(title, amount, endpoint, page) {
-  const div = document.createElement("div");
-  div.classList.add("category");
+  try {
+    const div = document.createElement("div");
+    div.classList.add("category");
 
-  const divTitle = document.createElement("h3");
-  divTitle.classList.add("category-title");
-  divTitle.textContent = title;
+    const divTitle = document.createElement("h3");
+    divTitle.classList.add("category-title");
+    divTitle.textContent = title;
 
-  div.appendChild(divTitle);
+    div.appendChild(divTitle);
 
-  const cards = await createCards(amount, endpoint, page);
-  div.appendChild(cards);
+    const cards = await createCards(amount, endpoint, page);
+    div.appendChild(cards);
 
-  mainContent.appendChild(div);
+    mainContent.appendChild(div);
+  } catch (error) {
+    console.log(error);
+
+    const paragraph = document.createElement("p");
+    paragraph.classList.add("error-paragraph");
+    paragraph.textContent = "There is nothing here, please try again.";
+
+    mainContent.appendChild(paragraph);
+  }
 }
 
 // CREATE CARDS -----------------------------------------------------
 
 async function createCards(amount, endpoint, page) {
-  const response = await getApiData(`${endpoint}&page=${page}`);
-  const data = response.results;
+  try {
+    const response = await getApiData(`${endpoint}&page=${page}`);
+    const data = response.results;
 
-  const div = document.createElement("div");
-  div.classList.add("card-container");
+    const div = document.createElement("div");
+    div.classList.add("card-container");
 
-  for (i = 0; i < amount; i++) {
-    const card = document.createElement("div");
-    card.classList.add("card");
+    for (i = 0; i < amount; i++) {
+      const card = document.createElement("div");
+      card.classList.add("card");
 
-    const link = document.createElement("a");
-    link.setAttribute("data-id", data[i].id);
-    link.setAttribute("data-type", data[i].title ? "movie" : "tv");
-    link.addEventListener("click", function () {
-      clearContainer();
-      setupGrid("2");
-      if (this.dataset.type === "movie") {
-        createDetails(`movie/${this.dataset.id}`);
-      }
-      if (this.dataset.type === "tv") {
-        createDetails(`tv/${this.dataset.id}`);
-      }
-      createFooter();
-    });
+      const link = document.createElement("a");
+      link.setAttribute("data-id", data[i].id);
+      link.setAttribute("data-type", data[i].title ? "movie" : "tv");
+      link.addEventListener("click", function () {
+        clearContainer();
+        setupGrid("2");
+        if (this.dataset.type === "movie") {
+          createDetails(`movie/${this.dataset.id}`);
+        }
+        if (this.dataset.type === "tv") {
+          createDetails(`tv/${this.dataset.id}`);
+        }
+        createFooter();
+      });
 
-    const img = document.createElement("img");
-    img.classList.add("card-img");
-    img.setAttribute(
-      "src",
-      `https://image.tmdb.org/t/p/original${data[i].poster_path}`
-    );
+      const img = document.createElement("img");
+      img.classList.add("card-img");
+      img.setAttribute(
+        "src",
+        `https://image.tmdb.org/t/p/original${data[i].poster_path}`
+      );
 
-    link.appendChild(img);
-    card.appendChild(link);
-    div.appendChild(card);
+      link.appendChild(img);
+      card.appendChild(link);
+      div.appendChild(card);
+    }
+
+    return div;
+  } catch (error) {
+    console.log(error);
   }
-
-  return div;
 }
 
 // CREATE DETAILS PAGE ----------------------------------------------
