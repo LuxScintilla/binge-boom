@@ -3,6 +3,8 @@ const homeBtn = document.querySelector(".menu-link-home");
 const popularBtn = document.querySelector(".menu-link-popular");
 const topRatedBtn = document.querySelector(".menu-link-toprated");
 const upcomingBtn = document.querySelector(".menu-link-upcoming");
+const searchInput = document.querySelector(".search-input");
+const searchBtn = document.querySelector(".search-btn");
 
 homeBtn.addEventListener("click", function () {
   assignActive(this);
@@ -19,6 +21,11 @@ topRatedBtn.addEventListener("click", function () {
 upcomingBtn.addEventListener("click", function () {
   assignActive(this);
   createUpcoming(1);
+});
+
+searchInput.addEventListener("keyup", function (e) {
+  console.log(e.target.value);
+  createSearchResults("Movies", e.target.value, 1);
 });
 
 const months = [
@@ -105,8 +112,8 @@ function createHome(page) {
   clearContainer();
   setupGrid("4");
   createSwiper();
-  createCategory("Top 5 Movies", 5, "movie/popular", page);
-  createCategory("Top 5 Shows", 5, "tv/popular", page);
+  createCategory("Top 5 Movies", 5, "movie/popular?language=en-US", page);
+  createCategory("Top 5 Shows", 5, "tv/popular?language=en-US", page);
   createFooter();
 }
 
@@ -114,54 +121,95 @@ createHome(1);
 
 // CREATE POPULAR PAGE ---------------------------------------------
 
-function createPopular(e, page) {
-  if (e === "Movies") {
+function createPopular(media, page) {
+  if (media === "Movies") {
     clearContainer();
     setupGrid("4");
-    createDropdown(e, createPopular);
-    createCategory("Popular Movies", 20, "movie/popular", page);
-    createPagination("movie/popular", page);
+    createDropdown(media, createPopular);
+    createCategory("Popular Movies", 20, "movie/popular?language=en-US", page);
+    createPagination("movie/popular?language=en-US", page);
     createFooter();
   }
-  if (e === "TV Shows") {
+  if (media === "TV Shows") {
     clearContainer();
     setupGrid("4");
-    createDropdown(e, createPopular);
-    createCategory("Popular TV Shows", 20, "tv/popular", page);
-    createPagination("tv/popular", page);
+    createDropdown(media, createPopular);
+    createCategory("Popular TV Shows", 20, "tv/popular?language=en-US", page);
+    createPagination("tv/popular?language=en-US", page);
     createFooter();
   }
 }
 
 // CREATE TOP RATED PAGE -------------------------------------------
 
-function createTopRated(e, page) {
-  if (e === "Movies") {
+function createTopRated(media, page) {
+  if (media === "Movies") {
     clearContainer();
     setupGrid("4");
-    createDropdown(e, createTopRated);
-    createCategory("Top Rated Movies", 20, "movie/top_rated", page);
-    createPagination("movie/top_rated", page);
+    createDropdown(media, createTopRated);
+    createCategory(
+      "Top Rated Movies",
+      20,
+      "movie/top_rated?language=en-US",
+      page
+    );
+    createPagination("movie/top_rated?language=en-US", page);
     createFooter();
   }
-  if (e === "TV Shows") {
+  if (media === "TV Shows") {
     clearContainer();
     setupGrid("4");
-    createDropdown(e, createTopRated);
-    createCategory("Top Rated TV Shows", 20, "tv/top_rated", page);
-    createPagination("tv/top_rated", page);
+    createDropdown(media, createTopRated);
+    createCategory(
+      "Top Rated TV Shows",
+      20,
+      "tv/top_rated?language=en-US",
+      page
+    );
+    createPagination("tv/top_rated?language=en-US", page);
     createFooter();
   }
 }
 
-// CREATE uPCOMING PAGE --------------------------------------------
+// CREATE UPCOMING PAGE --------------------------------------------
 
 function createUpcoming(page) {
   clearContainer();
   setupGrid("3");
-  createCategory("Upcoming Movies", 20, "movie/upcoming", page);
-  createPagination("movie/upcoming", page);
+  createCategory("Upcoming Movies", 20, "movie/upcoming?language=en-US", page);
+  createPagination("movie/upcoming?language=en-US", page);
   createFooter();
+}
+
+// CREATE SEARCH RESULTS --------------------------------------------
+
+function createSearchResults(media, searchQuery, page) {
+  if (media === "Movies") {
+    clearContainer();
+    setupGrid("4");
+    createDropdown(media, createSearchResults);
+    createCategory(
+      `Search results for ${searchQuery}`,
+      20,
+      `search/movie?query=${searchQuery}`,
+      page
+    );
+    createPagination(`search/movie?query=${searchQuery}`, page);
+    createFooter();
+  }
+  if (media === "TV Shows") {
+    clearContainer();
+    setupGrid("4");
+    createDropdown(media, createSearchResults);
+    createCategory(
+      `Search results for ${searchQuery}`,
+      20,
+      `search/tv?query=${searchQuery}`,
+      page
+    );
+    createPagination(`search/tv?query=${searchQuery}`, page);
+    createFooter();
+  }
 }
 
 // SETUP GRID -----------------------------------------------------
@@ -238,7 +286,7 @@ function initSwiper() {
 
 // CREATE DROPDOWN BOX -----------------------------------------------
 
-function createDropdown(e, myFunction) {
+function createDropdown(media, myFunction) {
   const div = document.createElement("div");
   div.classList.add("dropdown");
 
@@ -262,7 +310,7 @@ function createDropdown(e, myFunction) {
   option2.setAttribute("value", "TV Shows");
   option2.textContent = "TV Shows";
 
-  e === "Movies"
+  media === "Movies"
     ? option1.setAttribute("selected", "")
     : option2.setAttribute("selected", "");
 
@@ -277,12 +325,14 @@ function createDropdown(e, myFunction) {
 // CREATE PAGINATION -------------------------------------------------
 
 const pageObject = async function (endpoint, page) {
-  const response = await getApiData(`${endpoint}?language=en-US&page=${page}`);
+  const response = await getApiData(`${endpoint}&page=${page}`);
   const state = {
     endPoint: endpoint,
+    searchQuery: endpoint.slice(endpoint.indexOf("=") + 1),
     currentPage: page,
     totalPages: response.total_pages,
   };
+  console.log(state);
   return state;
 };
 
@@ -298,16 +348,20 @@ async function createPagination(endpoint, page) {
   btnPrevious.addEventListener("click", function () {
     if (state.currentPage === 1) {
       return;
-    } else if (state.endPoint === "movie/popular") {
+    } else if (state.endPoint === "movie/popular?language=en-US") {
       createPopular("Movies", state.currentPage - 1);
-    } else if (state.endPoint === "tv/popular") {
+    } else if (state.endPoint === "tv/popular?language=en-US") {
       createPopular("TV Shows", state.currentPage - 1);
-    } else if (state.endPoint === "movie/top_rated") {
+    } else if (state.endPoint === "movie/top_rated?language=en-US") {
       createTopRated("Movies", state.currentPage - 1);
-    } else if (state.endPoint === "tv/top_rated") {
+    } else if (state.endPoint === "tv/top_rated?language=en-US") {
       createTopRated("TV Shows", state.currentPage - 1);
-    } else if (state.endPoint === "movie/upcoming") {
+    } else if (state.endPoint === "movie/upcoming?language=en-US") {
       createUpcoming(state.currentPage - 1);
+    } else if (state.endPoint.slice(7, 9) === "mo") {
+      createSearchResults("Movies", state.searchQuery, state.currentPage - 1);
+    } else if (state.endPoint.slice(7, 9) === "tv") {
+      createSearchResults("TV Shows", state.searchQuery, state.currentPage - 1);
     }
   });
 
@@ -317,16 +371,20 @@ async function createPagination(endpoint, page) {
   btnNext.addEventListener("click", function () {
     if (state.currentPage === state.totalPages) {
       return;
-    } else if (state.endPoint === "movie/popular") {
+    } else if (state.endPoint === "movie/popular?language=en-US") {
       createPopular("Movies", state.currentPage + 1);
-    } else if (state.endPoint === "tv/popular") {
+    } else if (state.endPoint === "tv/popular?language=en-US") {
       createPopular("TV Shows", state.currentPage + 1);
-    } else if (state.endPoint === "movie/top_rated") {
+    } else if (state.endPoint === "movie/top_rated?language=en-US") {
       createTopRated("Movies", state.currentPage + 1);
-    } else if (state.endPoint === "tv/top_rated") {
+    } else if (state.endPoint === "tv/top_rated?language=en-US") {
       createTopRated("TV Shows", state.currentPage + 1);
-    } else if (state.endPoint === "movie/upcoming") {
+    } else if (state.endPoint === "movie/upcoming?language=en-US") {
       createUpcoming(state.currentPage + 1);
+    } else if (state.endPoint.slice(7, 9) === "mo") {
+      createSearchResults("Movies", state.searchQuery, state.currentPage + 1);
+    } else if (state.endPoint.slice(7, 9) === "tv") {
+      createSearchResults("TV Shows", state.searchQuery, state.currentPage + 1);
     }
   });
 
@@ -363,7 +421,7 @@ async function createCategory(title, amount, endpoint, page) {
 // CREATE CARDS -----------------------------------------------------
 
 async function createCards(amount, endpoint, page) {
-  const response = await getApiData(`${endpoint}?language=en-US&page=${page}`);
+  const response = await getApiData(`${endpoint}&page=${page}`);
   const data = response.results;
 
   const div = document.createElement("div");

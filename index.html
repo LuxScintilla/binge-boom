@@ -56,7 +56,7 @@
             >
           </li>
         </ul>
-        <div class="side-favourites">
+        <div class="favourites">
           <p class="fav-title">Favourites</p>
           <ul class="fav-list">
             <li class="fav-item">
@@ -70,7 +70,7 @@
           </ul>
         </div>
       </section>
-      <section class="search">
+      <section class="top-container">
         <div class="search-container">
           <input
             type="text"
@@ -81,30 +81,13 @@
             aria-label="search input bar"
             minlength="2"
             maxlength="25"
+            autocomplete="off"
           />
 
           <button class="search-btn" aria-label="search button">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </div>
-        <form class="form">
-          <input
-            class="radio-btn"
-            type="radio"
-            id="movies"
-            name="search-type"
-            value="Movies"
-          />
-          <label class="radio-label" for="movies">Movies</label>
-          <input
-            class="radio-btn"
-            type="radio"
-            id="shows"
-            name="search-type"
-            value="Shows"
-          />
-          <label class="radio-label" for="shows">Shows</label>
-        </form>
       </section>
 
       <section class="main-content">

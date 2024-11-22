@@ -185,16 +185,15 @@ body {
 
 /* ------------ Top Menu ------------ */
 
-.search {
+.top-container {
   display: flex;
   align-items: center;
-  padding: calc(var(--main-padding) - 0.8rem);
+  padding: var(--main-padding);
   border-bottom: 1px solid var(--divider);
 }
 
 .search-container {
   display: flex;
-  flex-direction: row-reverse;
   gap: 0.8rem;
 }
 
@@ -208,8 +207,10 @@ body {
 .search-input {
   border: 1px solid var(--divider);
   background-color: transparent;
+  color: var(--main-text);
   width: 32rem;
   padding: 0.8rem;
+  padding-left: 1.6rem;
   border-radius: 1.6rem;
 }
 
