@@ -260,7 +260,11 @@ async function createSwiper() {
 
     const description = document.createElement("p");
     description.classList.add("swiper-item-description");
-    description.textContent = movie.overview;
+    if (movie.overview.length > 400) {
+      description.textContent = `${movie.overview.substring(0, 400)} ...`;
+    } else {
+      description.textContent = movie.overview;
+    }
 
     const btn = document.createElement("button");
     btn.classList.add("swiper-item-btn");
@@ -477,10 +481,14 @@ async function createCards(amount, endpoint, page) {
 
       const img = document.createElement("img");
       img.classList.add("card-img");
-      img.setAttribute(
-        "src",
-        `https://image.tmdb.org/t/p/original${data[i].poster_path}`
-      );
+      if (data[i].poster_path === null) {
+        img.setAttribute("src", "./img/no-image.png");
+      } else {
+        img.setAttribute(
+          "src",
+          `https://image.tmdb.org/t/p/original${data[i].poster_path}`
+        );
+      }
 
       link.appendChild(img);
       card.appendChild(link);
