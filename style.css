@@ -180,6 +180,7 @@ body {
 }
 
 .fav-item {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 4fr;
   align-items: center;
@@ -192,6 +193,30 @@ body {
 
 .fav-item:hover {
   background-color: var(--medium-bg);
+}
+
+.fav-delete {
+  position: absolute;
+  display: none;
+  color: #808080;
+  background-color: transparent;
+  border: none;
+  top: 50%;
+  right: 1.6rem;
+  padding: 0.4rem;
+  border-radius: 0.4rem;
+  transform: translate(0, -50%);
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+}
+
+.fav-delete:hover {
+  color: rgb(200, 0, 0);
+  background-color: var(--light-bg);
+}
+
+.fav-item:hover > .fav-delete {
+  display: block;
 }
 
 .fav-img {

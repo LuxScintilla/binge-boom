@@ -690,8 +690,17 @@ function createFavourite(id, image, title) {
   favText.classList.add("fav-item-text");
   favText.textContent = title;
 
+  const favDelete = document.createElement("button");
+  favDelete.classList.add("fav-delete");
+  favDelete.setAttribute("data-id", id);
+  favDelete.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+  favDelete.addEventListener("click", function () {
+    deleteFavourite(this.dataset.id);
+  });
+
   favItem.appendChild(favIMG);
   favItem.appendChild(favText);
+  favItem.appendChild(favDelete);
   favouriteList.appendChild(favItem);
 }
 
@@ -711,6 +720,18 @@ function loadFavourites() {
       createFavourite(item.id, item.image, item.title);
     });
   }
+}
+
+// DELETE FAVOURITE -------------------------------------------------
+
+function deleteFavourite(id) {
+  const favs = localStorage.getItem("myFavourites")
+    ? JSON.parse(localStorage.getItem("myFavourites"))
+    : [];
+
+  const filtered = favs.filter((item) => item.id !== Number(id));
+  localStorage.setItem("myFavourites", JSON.stringify(filtered));
+  loadFavourites();
 }
 
 // CREATE FOOTER AT BOTTOM OF THE PAGE ------------------------------
