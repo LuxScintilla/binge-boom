@@ -4,6 +4,7 @@ const popularBtn = document.querySelector(".menu-link-popular");
 const topRatedBtn = document.querySelector(".menu-link-toprated");
 const upcomingBtn = document.querySelector(".menu-link-upcoming");
 const searchInput = document.querySelector(".search-input");
+const favouriteList = document.querySelector(".fav-list");
 
 homeBtn.addEventListener("click", function () {
   assignActive(this);
@@ -127,6 +128,7 @@ function createHome(page) {
   createCategory("Top 5 Movies", 5, "movie/popular?language=en-US", page);
   createCategory("Top 5 Shows", 5, "tv/popular?language=en-US", page);
   createFooter();
+  loadFavourites();
 }
 
 createHome(1);
@@ -141,6 +143,7 @@ function createPopular(media, page) {
     createCategory("Popular Movies", 20, "movie/popular?language=en-US", page);
     createPagination("movie/popular?language=en-US", page);
     createFooter();
+    loadFavourites();
   }
   if (media === "TV Shows") {
     clearContainer();
@@ -149,6 +152,7 @@ function createPopular(media, page) {
     createCategory("Popular TV Shows", 20, "tv/popular?language=en-US", page);
     createPagination("tv/popular?language=en-US", page);
     createFooter();
+    loadFavourites();
   }
 }
 
@@ -167,6 +171,7 @@ function createTopRated(media, page) {
     );
     createPagination("movie/top_rated?language=en-US", page);
     createFooter();
+    loadFavourites();
   }
   if (media === "TV Shows") {
     clearContainer();
@@ -180,6 +185,7 @@ function createTopRated(media, page) {
     );
     createPagination("tv/top_rated?language=en-US", page);
     createFooter();
+    loadFavourites();
   }
 }
 
@@ -191,6 +197,7 @@ function createUpcoming(page) {
   createCategory("Upcoming Movies", 20, "movie/upcoming?language=en-US", page);
   createPagination("movie/upcoming?language=en-US", page);
   createFooter();
+  loadFavourites();
 }
 
 // CREATE SEARCH RESULTS --------------------------------------------
@@ -209,6 +216,7 @@ function createSearchResults(media, searchQuery, page) {
     createPagination(`search/movie?query=${searchQuery}`, page);
     createFooter();
     assignActive("none");
+    loadFavourites();
   }
   if (media === "TV Shows") {
     clearContainer();
@@ -223,6 +231,7 @@ function createSearchResults(media, searchQuery, page) {
     createPagination(`search/tv?query=${searchQuery}`, page);
     createFooter();
     assignActive("none");
+    loadFavourites();
   }
 }
 
@@ -522,9 +531,10 @@ async function createDetails(endpoint) {
     const btn = document.createElement("button");
     btn.classList.add("details-btn");
     btn.setAttribute("data-id", data.id);
+    btn.setAttribute("data-type", "movie");
     btn.textContent = "Add to Favourites";
     btn.addEventListener("click", function () {
-      console.log("console favourites");
+      saveFavourite(`movie/${this.dataset.id}`);
     });
 
     const stars = document.createElement("p");
@@ -575,9 +585,10 @@ async function createDetails(endpoint) {
     const btn = document.createElement("button");
     btn.classList.add("details-btn");
     btn.setAttribute("data-id", data.id);
+    btn.setAttribute("data-type", "tv");
     btn.textContent = "Add to Favourites";
     btn.addEventListener("click", function () {
-      console.log("console favourites");
+      saveFavourite(`tv/${this.dataset.id}`);
     });
 
     const stars = document.createElement("p");
@@ -632,6 +643,73 @@ async function createDetails(endpoint) {
     details.appendChild(seasons);
     details.appendChild(originalLanguage);
     mainContent.appendChild(details);
+  }
+}
+
+// SAVE FAVOURITES TO LOCAL -----------------------------------------
+
+async function saveFavourite(endpoint) {
+  const data = await getApiData(endpoint);
+
+  console.log(data);
+
+  const favObject = {
+    id: data.id,
+    title: data.title ? data.title : data.name,
+    image: data.backdrop_path,
+  };
+
+  const LOCAL = localStorage.getItem("myFavourites")
+    ? JSON.parse(localStorage.getItem("myFavourites"))
+    : [];
+
+  duplicateCheck = (item) => item.id === favObject.id;
+
+  if (LOCAL.length === 0 || LOCAL.some(duplicateCheck) === false) {
+    LOCAL.push(favObject);
+    localStorage.setItem("myFavourites", JSON.stringify(LOCAL));
+    loadFavourites();
+  } else {
+    console.log("You already have this in your favourites");
+    console.log(LOCAL);
+  }
+}
+
+// CREATE FAVOURITES ------------------------------------------------
+
+function createFavourite(id, image, title) {
+  const favItem = document.createElement("li");
+  favItem.classList.add("fav-item");
+  favItem.setAttribute("data-id", id);
+
+  const favIMG = document.createElement("img");
+  favIMG.classList.add("fav-img");
+  favIMG.setAttribute("src", `https://image.tmdb.org/t/p/original${image}`);
+
+  const favText = document.createElement("p");
+  favText.classList.add("fav-item-text");
+  favText.textContent = title;
+
+  favItem.appendChild(favIMG);
+  favItem.appendChild(favText);
+  favouriteList.appendChild(favItem);
+}
+
+// LOAD FAVOURITES --------------------------------------------------
+
+function loadFavourites() {
+  favouriteList.innerHTML = "";
+
+  const favs = localStorage.getItem("myFavourites")
+    ? JSON.parse(localStorage.getItem("myFavourites"))
+    : [];
+
+  if (favs.length === 0) {
+    favouriteList.innerHTML = "";
+  } else {
+    favs.forEach((item) => {
+      createFavourite(item.id, item.image, item.title);
+    });
   }
 }
 
