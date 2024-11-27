@@ -653,6 +653,7 @@ async function saveFavourite(endpoint, element) {
 
   const favObject = {
     id: data.id,
+    type: data.title ? "movie" : "tv",
     title: data.title ? data.title : data.name,
     image: data.backdrop_path,
   };
@@ -675,10 +676,22 @@ async function saveFavourite(endpoint, element) {
 
 // CREATE FAVOURITES ------------------------------------------------
 
-function createFavourite(id, image, title) {
+function createFavourite(id, image, title, type) {
   const favItem = document.createElement("li");
   favItem.classList.add("fav-item");
   favItem.setAttribute("data-id", id);
+  favItem.setAttribute("data-type", type);
+  favItem.addEventListener("click", function () {
+    clearContainer();
+    setupGrid("2");
+    if (this.dataset.type === "movie") {
+      createDetails(`movie/${this.dataset.id}`);
+    }
+    if (this.dataset.type === "tv") {
+      createDetails(`tv/${this.dataset.id}`);
+    }
+    createFooter();
+  });
 
   const favIMG = document.createElement("img");
   favIMG.classList.add("fav-img");
@@ -715,7 +728,7 @@ function loadFavourites() {
     favouriteList.innerHTML = "";
   } else {
     favs.forEach((item) => {
-      createFavourite(item.id, item.image, item.title);
+      createFavourite(item.id, item.image, item.title, item.type);
     });
   }
 }
