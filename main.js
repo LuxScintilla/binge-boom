@@ -534,7 +534,7 @@ async function createDetails(endpoint) {
     btn.setAttribute("data-type", "movie");
     btn.textContent = "Add to Favourites";
     btn.addEventListener("click", function () {
-      saveFavourite(`movie/${this.dataset.id}`);
+      saveFavourite(`movie/${this.dataset.id}`, this);
     });
 
     const stars = document.createElement("p");
@@ -588,7 +588,7 @@ async function createDetails(endpoint) {
     btn.setAttribute("data-type", "tv");
     btn.textContent = "Add to Favourites";
     btn.addEventListener("click", function () {
-      saveFavourite(`tv/${this.dataset.id}`);
+      saveFavourite(`tv/${this.dataset.id}`, this);
     });
 
     const stars = document.createElement("p");
@@ -648,10 +648,8 @@ async function createDetails(endpoint) {
 
 // SAVE FAVOURITES TO LOCAL -----------------------------------------
 
-async function saveFavourite(endpoint) {
+async function saveFavourite(endpoint, element) {
   const data = await getApiData(endpoint);
-
-  console.log(data);
 
   const favObject = {
     id: data.id,
@@ -669,9 +667,9 @@ async function saveFavourite(endpoint) {
     LOCAL.push(favObject);
     localStorage.setItem("myFavourites", JSON.stringify(LOCAL));
     loadFavourites();
+    element.innerHTML = `Added <i class="fa-solid fa-check"></i>`;
   } else {
-    console.log("You already have this in your favourites");
-    console.log(LOCAL);
+    element.textContent = "Already in Favourites";
   }
 }
 
@@ -695,7 +693,7 @@ function createFavourite(id, image, title) {
   favDelete.setAttribute("data-id", id);
   favDelete.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
   favDelete.addEventListener("click", function () {
-    deleteFavourite(this.dataset.id);
+    createModal(this.parentElement, title, id);
   });
 
   favItem.appendChild(favIMG);
@@ -720,6 +718,35 @@ function loadFavourites() {
       createFavourite(item.id, item.image, item.title);
     });
   }
+}
+
+// CREATE DELETE CONFIRM MODAL --------------------------------------
+
+function createModal(element, title, id) {
+  const div = document.createElement("div");
+  div.classList.add("delete-modal");
+
+  const text = document.createElement("p");
+  text.innerHTML = `Are you sure you want to delete <span>${title}</span>?`;
+
+  const btnConfirm = document.createElement("button");
+  btnConfirm.classList.add("delete-modal-btn-confirm");
+  btnConfirm.textContent = "Delete";
+  btnConfirm.addEventListener("click", function () {
+    deleteFavourite(id);
+  });
+
+  const btnCancel = document.createElement("button");
+  btnCancel.classList.add("delete-modal-btn-cancel");
+  btnCancel.textContent = "Cancel";
+  btnCancel.addEventListener("click", function () {
+    this.parentElement.remove();
+  });
+
+  div.appendChild(text);
+  div.appendChild(btnConfirm);
+  div.appendChild(btnCancel);
+  element.appendChild(div);
 }
 
 // DELETE FAVOURITE -------------------------------------------------
