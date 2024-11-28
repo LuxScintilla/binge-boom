@@ -626,7 +626,11 @@ body {
 
 @media (max-width: 1380px) {
   .main-container {
-    max-width: 98%;
+    width: 98%;
+  }
+
+  .main-content {
+    max-width: fit-content;
   }
 }
 
@@ -642,7 +646,6 @@ body {
   .main-container {
     grid-template-columns: 1fr 3fr;
     height: 98%;
-    width: 98%;
   }
 
   .menu-header {
