@@ -797,6 +797,9 @@ function createFooter() {
   const footer = document.createElement("footer");
   footer.classList.add("footer");
 
+  const madeBy = document.createElement("p");
+  madeBy.innerHTML = `This project is made by <strong>Ekaterina Furman</strong>`;
+
   const p1 = document.createElement("p");
   p1.textContent = "Design inspiration from Dribbble by Anton Tkachev ";
 
@@ -823,6 +826,7 @@ function createFooter() {
 
   p1.appendChild(linkDribbble);
   p2.appendChild(linkAPI);
+  footer.appendChild(madeBy);
   footer.appendChild(p1);
   footer.appendChild(p2);
   footer.appendChild(apiIMG);
