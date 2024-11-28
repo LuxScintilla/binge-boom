@@ -5,6 +5,23 @@ const topRatedBtn = document.querySelector(".menu-link-toprated");
 const upcomingBtn = document.querySelector(".menu-link-upcoming");
 const searchInput = document.querySelector(".search-input");
 const favouriteList = document.querySelector(".fav-list");
+const menuCollapseBtn1 = document.querySelector(".menu-collapse-btn-1");
+const menuCollapseBtn2 = document.querySelector(".menu-collapse-btn-2");
+const menu = document.querySelector(".menu");
+
+window.addEventListener("resize", function () {
+  if (this.window.innerWidth > 1200) {
+    menu.classList.remove("hidden");
+  }
+});
+
+menuCollapseBtn1.addEventListener("click", function () {
+  menu.classList.toggle("hidden");
+});
+
+menuCollapseBtn2.addEventListener("click", function () {
+  menu.classList.toggle("hidden");
+});
 
 homeBtn.addEventListener("click", function () {
   assignActive(this);
@@ -269,8 +286,8 @@ async function createSwiper() {
 
     const description = document.createElement("p");
     description.classList.add("swiper-item-description");
-    if (movie.overview.length > 400) {
-      description.textContent = `${movie.overview.substring(0, 400)} ...`;
+    if (movie.overview.length > 300) {
+      description.textContent = `${movie.overview.substring(0, 300)} ...`;
     } else {
       description.textContent = movie.overview;
     }
